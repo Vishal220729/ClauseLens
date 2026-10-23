@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign In & Register — ClauseLens</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .role-pill-btn {
+      flex: 1;
+      text-align: center;
+      padding: 9px 0;
+      border-radius: var(--r-pill);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .role-pill-btn.active {
+      background: #FFFFFF;
+      color: var(--primary);
+      box-shadow: 0 2px 8px rgba(104, 71, 232, 0.15);
+    }
+    .pw-wrap {
+      position: relative;
+    }
+    .pw-wrap input {
+      width: 100%;
+      height: 40px;
+      padding: 8px 36px 8px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      font-size: 13.5px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-sizing: border-box;
+    }
+    .pw-wrap input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(104, 71, 232, 0.12);
+    }
+    .pw-toggle {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px;
+      display: grid;
+      place-items: center;
+    }
+    .pw-toggle:hover { color: var(--primary); }
+    .form-input-clean {
+      width: 100%;
+      height: 40px;
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      font-size: 13.5px;
+      background: #FFFFFF;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-sizing: border-box;
+    }
+    .form-input-clean:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(104, 71, 232, 0.12);
+    }
+    .form-label-clean {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+  </style>
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+</head>
+<body style="background: #F7F5FF; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 16px; margin: 0; font-family: 'Plus Jakarta Sans', sans-serif;">
+
+  <!-- Centered Brand Logo -->
+  <a class="brand" href="index.html" style="margin-bottom: 22px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+    <img src="assets/img/logo.png" alt="ClauseLens" style="height: 72px; width: auto; filter: drop-shadow(0 8px 24px rgba(104,71,232,0.28)); transition: transform 0.25s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+  </a>
+
+  <!-- Floating Centered Card (Unified 540px Standard) -->
+  <div class="auth-card-theme" style="max-width: 540px; width: 100%; margin: 0 auto; box-shadow: 0 24px 60px rgba(23, 21, 54, 0.14); border-radius: 22px; padding: 24px 28px; background: #FFFFFF; box-sizing: border-box;">
+    
+    <!-- Top Pill Switcher: Freelancer & Company Only -->
+    <div style="display: flex; background: var(--lavender-subtle); padding: 4px; border-radius: var(--r-pill); margin-bottom: 16px;">
+      <button type="button" class="role-pill-btn active" id="tab-freelancer" onclick="selectRole('freelancer')">Freelancer</button>
+      <button type="button" class="role-pill-btn" id="tab-company" onclick="selectRole('company')">Company</button>
+    </div>
+
+    <!-- 1. SIGN IN FORM -->
+    <form class="form" id="login-form" data-form="login" data-role="freelancer" novalidate style="margin: 0; box-shadow: none; padding: 0; border: none; background: transparent;">
+      <h2 id="login-heading" style="font-size: 24px; font-weight: 800; color: var(--text); margin-bottom: 4px; letter-spacing: -0.02em;">Freelancer Sign In</h2>
+      <p class="sub" id="login-sub" style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 18px; line-height: 1.4;">Welcome back! Sign in to access your contract analyzer and jobs.</p>
+
+      <div class="msg" role="alert" style="margin-bottom: 10px;"></div>
+
+      <div class="field" style="margin-bottom: 12px;">
+        <label for="email" class="form-label-clean" style="font-size: 13.5px;">Email Address</label>
+        <input id="email" name="email" type="email" autocomplete="username" required placeholder="alex@freelancer.com" class="form-input-clean" style="height: 42px; font-size: 14px;">
+      </div>
+
+      <div class="field" style="margin-bottom: 18px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+          <label for="password" class="form-label-clean" style="margin: 0; font-size: 13.5px;">Password</label>
+          <a href="forgot-password.html" style="font-size: 12.5px; color: var(--primary); font-weight: 600; text-decoration: none;">Forgot Password?</a>
+        </div>
+        <div class="pw-wrap">
+          <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Enter password" style="height: 42px; font-size: 14px;">
+          <button type="button" class="pw-toggle" onclick="togglePasswordVisibility('password')" aria-label="Toggle password visibility">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn btn-purple" type="submit" id="btn-login-submit" style="width: 100%; height: 44px; padding: 10px; font-size: 15px; font-weight: 700; border-radius: 12px; justify-content: center; box-shadow: 0 6px 20px rgba(104, 71, 232, 0.25);">
+        Sign In to Workspace &rarr;
+      </button>
+
+      <div class="alt-link" style="text-align: center; margin-top: 14px; font-size: 13.5px; color: var(--text-muted);">
+        Don't have an account? <a href="javascript:void(0)" onclick="setAuthMode('register')" style="color: var(--primary); font-weight: 700; text-decoration: none;">Create an Account</a>
+      </div>
+
+      <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); text-align: center; display: flex; justify-content: space-between; align-items: center;">
+        <a href="index.html" style="font-size: 13px; color: var(--text-muted); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+          &larr; ClauseLens Home
+        </a>
+        <a href="admin-login.html" style="font-size: 12.5px; color: var(--text-muted); font-weight: 600; text-decoration: none;">
+          Admin Access &rarr;
+        </a>
+      </div>
+    </form>
+
+    <!-- 2. CREATE ACCOUNT FORM (BALANCED 2-COLUMN GRID: ALL NECESSARY FIELDS ASKED) -->
+    <form class="form" id="register-form" data-form="freelancer" novalidate style="margin: 0; box-shadow: none; padding: 0; border: none; background: transparent; display: none;">
+      <h2 id="reg-heading" style="font-size: 24px; font-weight: 800; color: var(--text); margin-bottom: 4px; letter-spacing: -0.02em;">Create Freelancer Profile</h2>
+      <p class="sub" id="reg-sub" style="color: var(--text-muted); font-size: 13.5px; margin-bottom: 16px; line-height: 1.4;">Set up your profile to bid on projects and analyze client contracts.</p>
+
+      <div class="msg" role="alert" style="margin-bottom: 10px;"></div>
+      <input type="hidden" name="skills" value="General, Consulting, Freelance Services">
+
+      <!-- Freelancer 2-Column Fields (All 6 Necessary Fields) -->
+      <div id="freelancer-fields" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; margin-bottom: 14px;">
+        <div class="field" style="margin: 0;">
+          <label for="reg-fullName" class="form-label-clean">Full Name</label>
+          <input id="reg-fullName" name="fullName" required placeholder="e.g. Maya Lin" class="form-input-clean">
+        </div>
+        <div class="field" style="margin: 0;">
+          <label for="reg-email-free" class="form-label-clean">Email Address</label>
+          <input id="reg-email-free" name="email" type="email" required placeholder="maya@freelancer.com" class="form-input-clean">
+        </div>
+        <div class="field" style="margin: 0;">
+          <label for="reg-pass-free" class="form-label-clean">Password</label>
+          <div class="pw-wrap">
+            <input id="reg-pass-free" name="password" type="password" required placeholder="8+ chars">
+            <button type="button" class="pw-toggle" onclick="togglePasswordVisibility('reg-pass-free')" aria-label="Toggle password visibility">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="field" style="margin: 0;">
+          <label for="reg-country-free" class="form-label-clean">Country</label>
+          <input id="reg-country-free" name="country" required placeholder="United States, India..." class="form-input-clean">
+        </div>
+        <div class="field" style="margin: 0;">
+          <label for="reg-domain" class="form-label-clean">Primary Domain</label>
+          <select id="reg-domain" name="primaryDomain" required class="form-input-clean">
+            <option value="Web Development">Web Development</option>
+            <option value="Mobile App Development">Mobile Development</option>
+            <option value="UI/UX Design">UI/UX Design</option>
+            <option value="Graphic Design">Graphic Design</option>
+            <option value="Content Writing">Content Writing</option>
+            <option value="Digital Marketing">Digital Marketing</option>
+            <option value="Software Testing">Software Testing</option>
+            <option value="Data Analysis">Data Analysis</option>
+            <option value="Consulting">Consulting</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field" style="margin: 0;">
+          <label for="reg-exp" class="form-label-clean">Experience</label>
+          <select id="reg-exp" name="experienceLevel" required class="form-input-clean">
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate" selected>Intermediate</option>
+            <option value="Expert">Expert</option>
+          </select>
+        </div>
+
+        <!-- Secondary Domains (Optional with + Add Domain button) -->
+        <div style="grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; padding-top: 4px; border-top: 1px dashed var(--border);">
+          <label style="font-size: 13.5px; font-weight: 600; color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; display: flex; align-items: center; gap: 6px;">
+            <span>Secondary Domains</span>
+            <span style="font-size: 11.5px; font-weight: 500; color: var(--text-muted); background: var(--lavender-subtle); padding: 2px 7px; border-radius: 6px;">Optional</span>
+          </label>
+          <button type="button" class="btn-add-domain" onclick="addSecondaryDomainRow(this)" style="background: rgba(104, 71, 232, 0.08); border: 1.5px dashed var(--primary); color: var(--primary); border-radius: 8px; padding: 4px 10px; font-size: 12px; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Domain
+          </button>
+        </div>
+        <div class="secondary-domains-list" style="grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px;"></div>
+      </div>
+
+      <!-- Company 2-Column Fields (3 rows x 2 columns = 6 necessary fields + Secondary Domains) -->
+      <div id="company-fields" style="display: none; grid-template-columns: 1fr 1fr; gap: 10px 14px; margin-bottom: 14px;">
+        <div class="field" style="margin: 0;">
+          <label for="reg-companyName" class="form-label-clean">Company Name</label>
+          <input id="reg-companyName" name="companyName" required placeholder="e.g. Apex Software" class="form-input-clean">
+        </div>
+        <div class="field" style="margin: 0;">
+          <label for="reg-email-comp" class="form-label-clean">Work Email</label>
+          <input id="reg-email-comp" name="email" type="email" required placeholder="contact@apexsoftware.com" class="form-input-clean">
+        </div>
+        <div class="field" style="margin: 0;">
+          <label for="reg-pass-comp" class="form-label-clean">Password</label>
+          <div class="pw-wrap">
+            <input id="reg-pass-comp" name="password" type="password" required placeholder="8+ chars">
+            <button type="button" class="pw-toggle" onclick="togglePasswordVisibility('reg-pass-comp')" aria-label="Toggle password visibility">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="field" style="margin: 0;">
+          <label for="reg-country-comp" class="form-label-clean">Country</label>
+          <input id="reg-country-comp" name="country" required placeholder="United States, India..." class="form-input-clean">
+        </div>
+        <div class="field" style="margin: 0;">
+          <label for="reg-industry" class="form-label-clean">Industry</label>
+          <select id="reg-industry" name="industry" required class="form-input-clean">
+            <option value="Technology & SaaS">Technology &amp; SaaS</option>
+            <option value="FinTech">FinTech</option>
+            <option value="Artificial Intelligence">Artificial Intelligence</option>
+            <option value="E-Commerce">E-Commerce</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Digital Marketing">Digital Marketing</option>
+            <option value="Consulting">Consulting</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field" style="margin: 0;">
+          <label for="reg-contactPerson" class="form-label-clean">Contact Person</label>
+          <input id="reg-contactPerson" name="contactPerson" required placeholder="e.g. Sarah Jenkins" class="form-input-clean">
+        </div>
+      </div>
+
+      <button class="btn btn-purple" type="submit" id="btn-reg-submit" style="width: 100%; height: 44px; padding: 10px; font-size: 15px; font-weight: 700; border-radius: 12px; justify-content: center; box-shadow: 0 6px 20px rgba(104, 71, 232, 0.25);">
+        Complete Registration &rarr;
+      </button>
+
+      <div class="alt-link" style="text-align: center; margin-top: 14px; font-size: 13.5px; color: var(--text-muted);">
+        Already have an account? <a href="javascript:void(0)" onclick="setAuthMode('login')" style="color: var(--primary); font-weight: 700; text-decoration: none;">Sign In</a>
+      </div>
+    </form>
+
+    <!-- Bottom Divider Link -->
+    <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); text-align: center;">
+      <a href="index.html" style="font-size: 13px; color: var(--text-muted); font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+        &larr; Back to ClauseLens Home
+      </a>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    const roleData = {
+      freelancer: {
+        heading: 'Freelancer Sign In',
+        sub: 'Welcome back! Sign in to access your contract analyzer and jobs.',
+        email: '',
+        pass: ''
+      },
+      company: {
+        heading: 'Company Sign In',
+        sub: 'Welcome back! Sign in to post jobs, manage contracts & disburse payments.',
+        email: '',
+        pass: ''
+      }
+    };
+    let currentAuthMode = 'login';
+    let currentRole = 'freelancer';
+
+    function setAuthMode(mode) {
+      currentAuthMode = mode;
+      const isLogin = mode === 'login';
+      document.getElementById('login-form').style.display = isLogin ? 'block' : 'none';
+      document.getElementById('register-form').style.display = !isLogin ? 'block' : 'none';
+      selectRole(currentRole);
+    }
+
+    function selectRole(role) {
+      currentRole = role;
+      document.querySelectorAll('.role-pill-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('tab-' + role);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (currentAuthMode === 'login') {
+        const data = roleData[role];
+        if (data) {
+          const form = document.getElementById('login-form');
+          if (form) form.dataset.role = role;
+          document.getElementById('login-heading').textContent = data.heading;
+          document.getElementById('login-sub').textContent = data.sub;
+          document.getElementById('email').value = data.email;
+          document.getElementById('password').value = data.pass;
+        }
+      } else {
+        const regForm = document.getElementById('register-form');
+        if (regForm) regForm.dataset.form = role;
+        const isFreelancer = role === 'freelancer';
+        const freeDiv = document.getElementById('freelancer-fields');
+        const compDiv = document.getElementById('company-fields');
+        if (freeDiv && compDiv) {
+          freeDiv.style.display = isFreelancer ? 'grid' : 'none';
+          compDiv.style.display = isFreelancer ? 'none' : 'grid';
+          freeDiv.querySelectorAll('input, select, textarea').forEach(el => el.disabled = !isFreelancer);
+          compDiv.querySelectorAll('input, select, textarea').forEach(el => el.disabled = isFreelancer);
+        }
+        document.getElementById('reg-heading').textContent = isFreelancer ? 'Create Freelancer Profile' : 'Create Company Profile';
+        document.getElementById('reg-sub').textContent = isFreelancer ? 'Set up your profile to bid on projects and analyze client contracts.' : 'Set up your profile to post jobs and analyze client contracts.';
+        document.getElementById('btn-reg-submit').textContent = 'Complete Registration →';
+      }
+    }
+
+    function togglePasswordVisibility(fieldId) {
+      const field = document.getElementById(fieldId);
+      if (!field) return;
+      field.type = field.type === 'password' ? 'text' : 'password';
+    }
+
+    // Read URL query params: e.g. login.html?role=company&mode=register
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const r = params.get('role');
+      const m = params.get('mode');
+      if (r && (r === 'company' || r === 'freelancer')) {
+        currentRole = r;
+      }
+      if (m && (m === 'register' || m === 'login')) {
+        setAuthMode(m);
+      } else {
+        selectRole(currentRole);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>window.location.replace('freelancer-dashboard.html#analyzer');</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Contract Risk Analyzer — ClauseLens</title>
+  <meta name="description" content="AI-assisted contract analysis, risk detection, and negotiation intelligence for freelancers and companies.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .analyzer-shell {
+      max-width: 1100px;
+      margin: 40px auto 80px;
+      padding: 0 20px;
+    }
+    .analyzer-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .analyzer-header h1 {
+      font-size: clamp(2rem, 3.2vw, 2.6rem);
+      margin-bottom: 12px;
+    }
+    .analyzer-header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 650px;
+      margin: 0 auto;
+    }
+    .upload-box {
+      border: 2px dashed var(--lavender);
+      background: var(--lavender-subtle);
+      border-radius: var(--r-lg);
+      padding: 36px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.22s;
+      position: relative;
+    }
+    .upload-box:hover, .upload-box.dragover {
+      border-color: var(--primary);
+      background: #EDE8FF;
+    }
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+    .cat-card {
+      background: #FFFFFF;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .cat-card.risk-crit { border-left: 5px solid #EF6464; }
+    .cat-card.risk-hi { border-left: 5px solid #F97316; }
+    .cat-card.risk-med { border-left: 5px solid #F4B544; }
+    .cat-card.risk-lo { border-left: 5px solid #20B982; }
+    .flagged-item {
+      background: #FFFFFF;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 22px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+    .flagged-item.crit { border-left: 5px solid #9B1C1C; }
+    .flagged-item.hi { border-left: 5px solid #EF6464; }
+    .flagged-item.med { border-left: 5px solid #F4B544; }
+    .flagged-item.lo { border-left: 5px solid #20B982; }
+    .quote-box {
+      background: #FAF8FF;
+      border-left: 3px solid var(--lavender);
+      padding: 10px 14px;
+      font-family: monospace;
+      font-size: 13px;
+      color: #3B3355;
+      margin: 10px 0;
+      border-radius: 0 var(--r-sm) var(--r-sm) 0;
+      word-break: break-word;
+    }
+    .progress-bar-wrap {
+      width: 100%;
+      height: 10px;
+      background: var(--lavender-subtle);
+      border-radius: var(--r-pill);
+      overflow: hidden;
+      margin: 14px 0 8px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--lavender) 100%);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .dist-bar {
+      display: flex;
+      height: 14px;
+      border-radius: var(--r-pill);
+      overflow: hidden;
+      margin: 14px 0 10px;
+      background: var(--border-light);
+    }
+    .dist-segment { height: 100%; }
+    .dist-crit { background: #EF6464; }
+    .dist-hi { background: #F97316; }
+    .dist-med { background: #F4B544; }
+    .dist-lo { background: #20B982; }
+  </style>
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+</head>
+<body>
+
+  <!-- TOP NAVIGATION -->
+  <header style="background:#FFFFFF; border-bottom:1px solid var(--border); padding:14px 0; position:sticky; top:0; z-index:100; box-shadow:var(--shadow-sm);">
+    <div class="wrap" style="display:flex; justify-content:space-between; align-items:center;">
+      <a class="brand" href="index.html" style="text-decoration:none;">
+        <img src="assets/img/logo-horizontal.png" alt="ClauseLens" style="height:34px; width:auto; filter: drop-shadow(0 2px 8px rgba(104,71,232,0.2));">
+      </a>
+
+      <div style="display:flex; align-items:center; gap:16px;">
+        <a href="index.html" style="font-weight:600; font-size:14px; color:var(--text-muted);">Home</a>
+        <a href="login.html" class="btn btn-purple btn-sm">Sign In / Register</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="analyzer-shell">
+    <div class="analyzer-header">
+      <span class="tag purple" style="margin-bottom:10px;">AI Legal Intelligence</span>
+      <h1>AI Contract Risk Analyzer</h1>
+      <p>Scan freelance contracts, agreements, and scopes of work to detect hidden risks, unfair liability, payment delays, and IP traps.</p>
+    </div>
+
+    <!-- Legal Disclaimer Notice -->
+    <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:var(--r-md); padding:12px 18px; margin-bottom:24px; display:flex; align-items:center; gap:12px; font-size:13.5px; color:#92400E;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div>
+        <strong>Informational Decision Support:</strong> Automated analysis results are for negotiation guidance and risk discovery. They do not constitute formal legal counsel. Exact quotations are verified against source text.
+      </div>
+    </div>
+
+    <!-- STEP 1: INPUT / UPLOAD CARD -->
+    <div class="card" style="margin-bottom:28px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h3>Step 1: Upload or Paste Agreement</h3>
+          <p style="color:var(--text-muted); font-size:14px;">Upload your contract document or load a curated test sample.</p>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <label for="sample-select" style="font-size:13px; font-weight:600; color:var(--text-muted);">Test Samples:</label>
+          <select id="sample-select" class="form-ctrl" style="width:230px;" onchange="loadPresetSample(this.value)">
+            <option value="">-- Choose Sample Contract --</option>
+            <option value="high-risk">High-Risk Freelance Agreement (Payment 90d, Unlimited Revisions)</option>
+            <option value="balanced">Balanced & Fair Web Services Contract</option>
+            <option value="ip-trap">Unfair IP Assignment & Strict Indemnity</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Drag & Drop Zone -->
+      <div class="upload-box" id="drop-zone" onclick="document.getElementById('file-input').click()">
+        <input type="file" id="file-input" style="display:none;" accept=".txt,.pdf,.docx" onchange="handleFileUpload(event)">
+        <div style="width:52px; height:52px; background:#FFFFFF; border-radius:50%; display:grid; place-items:center; margin:0 auto 12px; color:var(--primary); box-shadow:var(--shadow-sm);">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <strong style="font-size:16px; color:var(--text); display:block; margin-bottom:4px;" id="upload-label">
+          Drag & drop contract file here, or click to browse
+        </strong>
+        <span style="font-size:13px; color:var(--text-muted);">
+          Supported formats: TXT, PDF, DOCX (up to 15MB)
+        </span>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0 16px;">
+        <div class="form-group">
+          <label for="contract-type">Agreement Category</label>
+          <select id="contract-type" class="form-ctrl">
+            <option value="Freelance Master Services Agreement">Freelance Master Services Agreement</option>
+            <option value="Non-Disclosure Agreement (NDA)">Non-Disclosure Agreement (NDA)</option>
+            <option value="Fixed-Price Statement of Work">Fixed-Price Statement of Work</option>
+            <option value="Monthly Retainer Agreement">Monthly Retainer Agreement</option>
+            <option value="Intellectual Property Transfer">Intellectual Property Transfer</option>
+            <option value="General Commercial Contract">General Commercial Contract</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="user-role-perspective">Analyze From Perspective Of</label>
+          <select id="user-role-perspective" class="form-ctrl">
+            <option value="freelancer">Freelancer / Independent Contractor</option>
+            <option value="company">Client / Hiring Company</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="contract-content">Contract Terms (Editable Text Content)</label>
+        <textarea id="contract-content" class="form-ctrl" rows="8" placeholder="Paste the client or company contract agreement text here..."></textarea>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <span style="font-size:13px; color:var(--text-muted);" id="char-count">0 characters</span>
+        <button class="btn btn-purple btn-lg" id="btn-run" onclick="startAnalysis()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><path d="M11 8v6M8 11h6"/></svg>
+          Analyze Contract Terms
+        </button>
+      </div>
+    </div>
+
+    <!-- PROGRESS INDICATOR -->
+    <div id="progress-card" class="card" style="display:none; text-align:center; padding:36px; margin-bottom:28px;">
+      <h3 id="progress-status">Evaluating Contract Clauses...</h3>
+      <p style="color:var(--text-muted); font-size:14px; margin-bottom:12px;" id="progress-detail">Comparing clauses against industry safety benchmarks...</p>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <small style="color:var(--text-muted); font-size:12px;" id="progress-pct">25% complete</small>
+    </div>
+
+    <!-- STEP 2: RESULTS SECTION -->
+    <div id="results-view" style="display:none;">
+
+      <!-- Overall Risk Card -->
+      <div class="card" style="margin-bottom:24px; border-top:4px solid var(--primary);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
+          <div>
+            <span class="tag purple" style="margin-bottom:8px;">Analysis Complete</span>
+            <h2 id="res-contract-name">Freelance Agreement Risk Profile</h2>
+            <p style="color:var(--text-muted); font-size:14.5px;" id="res-summary-text">
+              Identified 4 risk factors requiring revision or clarification before signing.
+            </p>
+          </div>
+          <div style="display:flex; gap:12px; align-items:center;">
+            <button class="btn btn-line btn-sm" onclick="downloadReportCSV()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download Report (CSV)
+            </button>
+            <button class="btn btn-purple btn-sm" onclick="window.print()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Print / Save PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- Meter and Breakdown -->
+        <div class="risk-meter" style="margin-top:24px;">
+          <div class="risk-circle" id="risk-score-circle">
+            <span class="score-num" id="res-score-num">45</span>
+            <span class="score-lbl">Risk Score</span>
+          </div>
+
+          <div style="flex:1;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <strong style="font-size:18px;" id="res-class-lbl">High Commercial Risk</strong>
+              <div style="display:flex; gap:8px;">
+                <span class="tag critical" id="badge-crit">1 Critical</span>
+                <span class="tag hi" id="badge-hi">2 High</span>
+                <span class="tag md" id="badge-med">1 Medium</span>
+                <span class="tag lo" id="badge-lo">3 Low</span>
+              </div>
+            </div>
+
+            <!-- Distribution Segmented Bar -->
+            <div class="dist-bar">
+              <div class="dist-segment dist-crit" id="bar-crit" style="width:25%;"></div>
+              <div class="dist-segment dist-hi" id="bar-hi" style="width:35%;"></div>
+              <div class="dist-segment dist-med" id="bar-med" style="width:25%;"></div>
+              <div class="dist-segment dist-lo" id="bar-lo" style="width:15%;"></div>
+            </div>
+
+            <div style="font-size:13px; color:var(--text-muted); display:flex; justify-content:space-between;">
+              <span>Severe terms detected (Payment >60d, Unlimited Indemnity)</span>
+              <span>Evaluated against ClauseLens safety index</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 12 EVALUATION CATEGORIES BENTO GRID -->
+      <h3 style="margin:30px 0 14px;">12 Key Legal & Commercial Dimensions</h3>
+      <div class="category-grid" id="cat-grid"></div>
+
+      <!-- FLAGGED CLAUSES LIST -->
+      <h3 style="margin:36px 0 16px;">Flagged Clauses & Negotiation Advice</h3>
+      <div id="flagged-list"></div>
+
+      <!-- REVISION EMAIL GENERATOR -->
+      <div class="card" style="margin-top:30px; background:linear-gradient(135deg, #FFFFFF 0%, #FAF8FF 100%);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+          <div>
+            <h3>Generated Revision Request Email (Ready to Send)</h3>
+            <p style="color:var(--text-muted); font-size:14px;">Copy and send this professional, polite revision email to your client or counterparty.</p>
+          </div>
+          <button class="btn btn-purple btn-sm" onclick="copyEmailDraft()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy Email Draft
+          </button>
+        </div>
+        <textarea id="email-draft-box" class="form-ctrl" rows="7" readonly style="font-family:monospace; font-size:13.5px; background:#F8FAF9;"></textarea>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="js/api.js"></script>
+  <script src="js/contract-analyzer.js"></script>
+</body>
+</html>

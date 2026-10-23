@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Analytics & Reports — ClauseLens</title>
+  <meta name="description" content="Commercial analytics, contract safety metrics, risk distribution, and earnings reports.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Chart.js CDN for interactive charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    .reports-shell {
+      max-width: 1140px;
+      margin: 40px auto 80px;
+      padding: 0 20px;
+    }
+    .chart-container {
+      position: relative;
+      height: 280px;
+      width: 100%;
+    }
+    .filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 28px;
+      background: #FFFFFF;
+      padding: 16px 24px;
+      border-radius: var(--r-md);
+      border: 1.5px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+    @media (max-width: 850px) {
+      .grid-2col { grid-template-columns: 1fr; }
+    }
+  </style>
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header style="background:#FFFFFF; border-bottom:1px solid var(--border); padding:14px 0; position:sticky; top:0; z-index:100; box-shadow:var(--shadow-sm);">
+    <div class="wrap" style="display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <a class="brand" href="admin-dashboard.html" style="text-decoration:none;">
+          <img src="assets/img/logo-horizontal.png" alt="ClauseLens" style="height:34px; width:auto; filter: drop-shadow(0 2px 8px rgba(104,71,232,0.2));">
+        </a>
+        <span class="portal-badge" style="background:#FEE2E2; color:#991B1B;">Admin Executive Intelligence</span>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:16px;">
+        <a href="admin-dashboard.html" class="btn btn-line btn-sm">&larr; Return to Admin Console</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="reports-shell">
+    <div style="text-align:center; margin-bottom:32px;">
+      <span class="tag purple" style="margin-bottom:10px;">Executive Intelligence</span>
+      <h1>Platform Analytics & Contract Intelligence</h1>
+      <p style="color:var(--text-muted); font-size:1.1rem; max-width:650px; margin:0 auto;">
+        Track contract analysis volume, safety distributions, project milestone delivery rates, and earnings trends.
+      </p>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <label for="time-range" style="font-weight:700; font-size:13.5px; color:var(--text);">Date Filter:</label>
+        <select id="time-range" class="form-ctrl" style="width:180px;" onchange="updateCharts(this.value)">
+          <option value="30">Last 30 Days</option>
+          <option value="90" selected>Last Quarter (90 Days)</option>
+          <option value="365">Year-to-Date (2026)</option>
+          <option value="all">All Time History</option>
+        </select>
+
+        <label for="domain-filter" style="font-weight:700; font-size:13.5px; color:var(--text); margin-left:8px;">Domain:</label>
+        <select id="domain-filter" class="form-ctrl" style="width:190px;" onchange="updateCharts()">
+          <option value="all">All Categories</option>
+          <option value="web">Web & Software Dev</option>
+          <option value="design">UI/UX & Product Design</option>
+          <option value="legal">Consulting & Legal</option>
+        </select>
+      </div>
+
+      <button class="btn btn-purple btn-sm" onclick="exportAnalyticsCSV()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export Analytics (CSV)
+      </button>
+    </div>
+
+    <!-- TOP KPI STAT CARDS -->
+    <div class="metric-cards" style="margin-bottom:28px;">
+      <div class="m-card">
+        <small>Total Contracts Analyzed</small>
+        <strong id="kpi-total">342</strong>
+        <em>&uarr; 24% increase vs prior period</em>
+      </div>
+      <div class="m-card">
+        <small>Contract Safety Index</small>
+        <strong id="kpi-safety" style="color:var(--primary);">88.4%</strong>
+        <em>Avg risk score of approved agreements</em>
+      </div>
+      <div class="m-card">
+        <small>Milestone Completion Rate</small>
+        <strong id="kpi-completion" style="color:var(--success);">96.2%</strong>
+        <em>Verified halfway & final check-ins</em>
+      </div>
+    </div>
+
+    <!-- CHARTS SECTION ROW 1 -->
+    <div class="grid-2col">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div>
+            <h3>Monthly Analysis Volume</h3>
+            <p style="font-size:13px; color:var(--text-muted);">Contracts processed & risk evaluated</p>
+          </div>
+          <span class="tag purple">Monthly Trend</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="volumeChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div>
+            <h3>Contract Risk Distribution</h3>
+            <p style="font-size:13px; color:var(--text-muted);">Breakdown of detected severity levels</p>
+          </div>
+          <span class="tag purple">Severity Breakdown</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="riskDistChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS SECTION ROW 2 -->
+    <div class="grid-2col">
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div>
+            <h3>Freelance Earnings & Settlement Volume</h3>
+            <p style="font-size:13px; color:var(--text-muted);">Disbursed milestone payments ($ USD)</p>
+          </div>
+          <span class="tag low">Verified Payouts</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="earningsChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div>
+            <h3>Top Flagged Clause Categories</h3>
+            <p style="font-size:13px; color:var(--text-muted);">Most frequent contract negotiation points</p>
+          </div>
+          <span class="tag hi">Negotiation Traps</span>
+        </div>
+        <div class="chart-container">
+          <canvas id="clausesChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT AUDIT LOG TABLE -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3>Recent Platform Contract Scans</h3>
+        <span style="font-size:13px; color:var(--text-muted);">Real-time monitoring feed</span>
+      </div>
+
+      <div class="table-responsive">
+        <table class="clean-table" id="scans-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Contract Title</th>
+              <th>User Role</th>
+              <th>Risk Score</th>
+              <th>Flagged Clauses</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="scans-tbody">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/reports.js"></script>
+</body>
+</html>

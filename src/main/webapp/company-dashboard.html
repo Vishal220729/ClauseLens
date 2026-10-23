@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Company Portal — ClauseLens</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="assets/img/favicon.png">
+</head>
+<body data-dashboard="company" data-login="company-login.html">
+
+  <div class="dash-shell">
+    <!-- TOP BAR -->
+    <header class="dash-topbar">
+      <div class="dash-top-left">
+        <a class="brand" href="company-dashboard.html" style="text-decoration:none;">
+          <img src="assets/img/logo-horizontal.png" alt="ClauseLens" style="height:34px; width:auto; filter: drop-shadow(0 2px 8px rgba(104,71,232,0.2));">
+        </a>
+        <span class="portal-badge" style="background:var(--lavender-light); color:var(--primary);">Company Management Portal</span>
+      </div>
+
+      <div class="dash-user-ctrl">
+        <!-- Notifications Center -->
+        <div class="notif-wrapper" id="notif-wrapper">
+          <button class="notif-bell" id="notif-bell-btn" onclick="toggleNotifications(event)" aria-label="Notifications" type="button" title="View Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="notif-badge" id="notif-count" style="display:none;">0</span>
+          </button>
+
+          <div class="notif-dropdown" id="notif-dropdown">
+            <div class="notif-header">
+              <div class="notif-title-wrap">
+                <span class="notif-title">Notifications</span>
+                <span class="notif-unread-pill" id="notif-unread-pill" style="display:none;">0 new</span>
+              </div>
+              <button class="notif-mark-read-btn" onclick="markAllNotificationsRead(event)" type="button" title="Mark all notifications as read">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Mark all read
+              </button>
+            </div>
+            <div class="notif-list" id="notif-list">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+        <span style="font-weight:600; font-size:14px;" id="who">Company</span>
+        <button class="btn btn-line btn-sm" id="logout" type="button">Log Out</button>
+      </div>
+    </header>
+
+    <!-- MAIN BODY -->
+    <div class="dash-body">
+      <aside class="dash-nav">
+        <a href="#overview" class="active" onclick="switchCompanyTab('overview')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard Overview
+        </a>
+        <a href="#company-profile" onclick="switchCompanyTab('company-profile')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Company Profile
+        </a>
+        <a href="#post-job" onclick="switchCompanyTab('post-job')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          Post Freelance Work
+        </a>
+        <a href="#manage-jobs" onclick="switchCompanyTab('manage-jobs')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          Jobs & Applications
+        </a>
+        <a href="#agreements" onclick="switchCompanyTab('agreements')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Contracts & Agreements
+        </a>
+        <a href="#payments" onclick="switchCompanyTab('payments')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Payment Milestones
+        </a>
+        <a href="#chat" onclick="switchCompanyTab('chat')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Project Messages
+        </a>
+      </aside>
+
+      <main class="dash-content">
+
+        <!-- TAB 1: OVERVIEW -->
+        <section id="tab-overview" class="tab-pane">
+          <div class="page-title-box">
+            <div>
+              <h1>Company Hiring Dashboard</h1>
+              <p>Manage talent acquisition, contract drafting, and verified milestone disbursements.</p>
+            </div>
+            <button class="btn btn-purple btn-sm" onclick="switchCompanyTab('post-job')">+ Post New Job</button>
+          </div>
+
+          <!-- 6 CORE OVERVIEW METRIC CARDS -->
+          <div class="metric-cards" style="grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 24px;">
+            <div class="m-card">
+              <small>Total Projects Posted</small>
+              <strong id="comp-job-count">0</strong>
+              <em>All-time job listings created</em>
+            </div>
+            <div class="m-card">
+              <small>Active Projects</small>
+              <strong id="comp-active-projects">0</strong>
+              <em>In-progress milestones</em>
+            </div>
+            <div class="m-card">
+              <small>Total Freelancers Hired</small>
+              <strong id="comp-hired-count">0</strong>
+              <em>Verified talent contracted</em>
+            </div>
+            <div class="m-card">
+              <small>Contracts Created</small>
+              <strong id="comp-contract-count">0</strong>
+              <em>Protected with version control</em>
+            </div>
+            <div class="m-card">
+              <small>Contracts Awaiting Approval</small>
+              <strong id="comp-pending-contracts" style="color:#F59E0B;">0</strong>
+              <em>Pending freelancer or client sign-off</em>
+            </div>
+            <div class="m-card">
+              <small>Contracts With Identified Risks</small>
+              <strong id="comp-risk-contracts" style="color:var(--danger);">0</strong>
+              <em>Flagged by AI Contract Analyzer</em>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:24px;">
+            <h3 style="margin-bottom:14px;">Recent Published Jobs</h3>
+            <div id="comp-recent-jobs" style="display:grid; gap:12px;">
+              <p style="color:var(--text-muted);">Loading jobs...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: POST A JOB -->
+        <section id="tab-post-job" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <h1>Create a Freelance Job Posting</h1>
+              <p>Specify project requirements, required domain, budget, advance deposit, and revision terms.</p>
+            </div>
+          </div>
+
+          <div class="card" style="max-width:800px;">
+            <form id="job-post-form" onsubmit="createJob(event)">
+              <div class="form-group">
+                <label>Job Title</label>
+                <input type="text" id="j-title" class="form-ctrl" required placeholder="e.g. Senior Full-Stack Engineer for SaaS Dashboard">
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div class="form-group">
+                  <label>Primary Domain</label>
+                  <select id="j-domain" class="form-ctrl">
+                    <option value="Web Development">Web Development</option>
+                    <option value="Mobile App Development">Mobile App Development</option>
+                    <option value="Graphic Design">Graphic Design</option>
+                    <option value="UI/UX Design">UI/UX Design</option>
+                    <option value="Content Writing">Content Writing</option>
+                    <option value="Software Testing">Software Testing</option>
+                    <option value="Data Analysis">Data Analysis</option>
+                    <option value="Consulting">Consulting</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Required Skills (comma-separated)</label>
+                  <input type="text" id="j-skills" class="form-ctrl" required placeholder="e.g. React, Java, MySQL, REST APIs">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Project Scope & Deliverables Description</label>
+                <textarea id="j-desc" class="form-ctrl" rows="4" required placeholder="Describe deliverables, responsibilities, checklist requirements..."></textarea>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+                <div class="form-group">
+                  <label>Budget ($ USD)</label>
+                  <input type="number" id="j-budget" class="form-ctrl" required min="50" placeholder="2500">
+                </div>
+                <div class="form-group">
+                  <label>Advance Deposit (%)</label>
+                  <input type="number" id="j-advance" class="form-ctrl" required min="10" max="100" value="30">
+                </div>
+                <div class="form-group">
+                  <label>Completion Deadline</label>
+                  <input type="date" id="j-deadline" class="form-ctrl" required>
+                </div>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                <div class="form-group">
+                  <label>Revision Standard</label>
+                  <input type="text" id="j-revisions" class="form-ctrl" value="Up to 3 rounds of revisions included">
+                </div>
+                <div class="form-group">
+                  <label>Maintenance Warranty</label>
+                  <input type="text" id="j-maint" class="form-ctrl" value="30-day post-launch bug fixing">
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-green">Publish Job to Marketplace</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- TAB 3: JOBS & APPLICANTS -->
+        <section id="tab-manage-jobs" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <h1>Manage Jobs & Review Proposals</h1>
+              <p>Shortlist candidates, accept proposals, and begin agreement drafting.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="margin-bottom:16px;">Your Published Listings</h3>
+            <div id="company-jobs-list" style="display:grid; gap:14px;">
+              <p style="color:var(--text-muted);">Loading your jobs...</p>
+            </div>
+          </div>
+
+          <!-- Applicants Sub-panel -->
+          <div class="card" id="applicants-panel" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <h3 id="app-job-header">Applicants</h3>
+              <button class="btn btn-line btn-sm" onclick="document.getElementById('applicants-panel').style.display='none'">Close</button>
+            </div>
+            <div class="table-responsive">
+              <table class="clean-table">
+                <thead>
+                  <tr>
+                    <th>Freelancer</th>
+                    <th>Experience</th>
+                    <th>Bid Price</th>
+                    <th>Estimated Days</th>
+                    <th>Cover Letter</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="app-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: AGREEMENTS & DRAFT BUILDER -->
+        <section id="tab-agreements" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <h1>Agreements & Contracts</h1>
+              <p>Prepare formal agreements with clear milestones, IP ownership, and dual-acceptance version tracking.</p>
+            </div>
+            <button class="btn btn-green btn-sm" onclick="openCreateAgreementModal()">+ Draft Agreement</button>
+          </div>
+
+          <div class="card">
+            <h3 style="margin-bottom:16px;">Contract Versions & Status</h3>
+            <div id="agreements-list" style="display:grid; gap:14px;">
+              <p style="color:var(--text-muted);">Loading agreements...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 5: PAYMENTS & ESCROW DISBURSEMENT -->
+        <section id="tab-payments" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <span class="portal-badge" style="background:#064E3B; color:#FFFFFF; font-weight:700; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; font-size:12px;">
+                  ClauseLens Smart Escrow
+                </span>
+                <span class="tag lo" style="background:#ECFDF5; color:#059669; font-weight:700;">&check; Escrow Active</span>
+              </div>
+              <h1 style="margin:0 0 4px;">Milestone Disbursements & Payment Release</h1>
+              <p style="margin:0; color:var(--text-muted); font-size:14px;">Authorize and release verified contractor milestone payouts directly from project escrow.</p>
+            </div>
+            <div style="display:flex; gap:10px;">
+              <button class="btn btn-line btn-sm" onclick="loadCompanyPayments()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Refresh Payouts
+              </button>
+            </div>
+          </div>
+
+          <!-- Payout Metrics Bento Banner -->
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:24px;">
+            <div class="card" style="margin-bottom:0; padding:20px; border-left:4px solid #059669;">
+              <span style="font-size:12.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Total Released & Paid</span>
+              <div style="font-size:26px; font-weight:800; color:var(--text); margin-top:4px;" id="stat-paid-amount">$0.00</div>
+              <small style="color:#059669; font-weight:600; font-size:12px;" id="stat-paid-count">0 settled milestones</small>
+            </div>
+
+            <div class="card" style="margin-bottom:0; padding:20px; border-left:4px solid #D97706;">
+              <span style="font-size:12.5px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Pending Release</span>
+              <div style="font-size:26px; font-weight:800; color:#D97706; margin-top:4px;" id="stat-pending-amount">$0.00</div>
+              <small style="color:var(--text-muted); font-size:12px;" id="stat-pending-count">0 awaiting release</small>
+            </div>
+
+            <div class="card" style="margin-bottom:0; padding:20px; border-left:4px solid #059669; background:linear-gradient(135deg, #FFFFFF 0%, #F0FDF4 100%);">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div>
+                  <span style="font-size:12.5px; font-weight:700; color:#047857; text-transform:uppercase; letter-spacing:0.5px;">Escrow Settlement</span>
+                  <div style="font-size:18px; font-weight:800; color:#064E3B; margin-top:4px;">Direct Milestone Release</div>
+                  <small style="color:#059669; font-weight:600; font-size:12px;">Instant Wallet Credit &bull; 0% Fee</small>
+                </div>
+                <div style="width:36px; height:36px; border-radius:8px; background:#064E3B; display:grid; place-items:center; color:#FFFFFF;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Escrow Guarantee Card -->
+          <div style="background:#FAF8FF; border:1px solid rgba(104,71,232,0.25); border-radius:var(--r-md); padding:14px 18px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:36px; height:36px; border-radius:50%; background:#059669; display:grid; place-items:center; color:#FFFFFF; font-weight:800; font-size:16px;">
+                &#10003;
+              </div>
+              <div>
+                <strong style="font-size:14px; color:var(--text);">Milestone Escrow Release Protection:</strong>
+                <p style="margin:2px 0 0; font-size:13px; color:var(--text-muted);">When you click "Release Payment", funds are authorized and released directly to the contractor with instant notification and reputation points credited.</p>
+              </div>
+            </div>
+            <span class="tag lo" style="font-size:12px; font-weight:700;">Direct Disbursement &bull; 0% Platform Markup</span>
+          </div>
+
+          <div class="card">
+            <h3 style="margin-bottom:16px;">Milestone Payment Invoices</h3>
+            <div class="table-responsive">
+              <table class="clean-table">
+                <thead>
+                  <tr>
+                    <th>Project</th>
+                    <th>Freelancer</th>
+                    <th>Milestone Title</th>
+                    <th>Amount ($ USD / ₹ INR)</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="comp-payments-tbody">
+                  <tr><td colspan="6" style="text-align:center; padding:24px; color:var(--text-muted);">Loading payment milestones...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 6: CHAT -->
+        <section id="tab-chat" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <h1>Project Conversations</h1>
+              <p>Secure direct communication with candidates and accepted contractors.</p>
+            </div>
+          </div>
+
+          <div class="card" style="display:grid; grid-template-columns:260px 1fr; gap:20px; height:500px; padding:0; overflow:hidden;">
+            <div style="border-right:1px solid var(--border); overflow-y:auto; padding:16px;" id="comp-conv-list">
+              <p style="color:var(--text-muted); font-size:13px;">Loading conversations...</p>
+            </div>
+
+            <div style="display:flex; flex-direction:column; justify-content:space-between; padding:20px;">
+              <div id="comp-chat-header" style="font-weight:700; border-bottom:1px solid var(--border); padding-bottom:10px; font-size:15px;">
+                Select a conversation
+              </div>
+              <div id="comp-chat-messages" style="flex:1; overflow-y:auto; padding:16px 0; display:flex; flex-direction:column; gap:10px;">
+                <p style="color:var(--text-muted); text-align:center; margin-top:40px;">Select a conversation to start messaging.</p>
+              </div>
+              <div style="display:flex; gap:10px; border-top:1px solid var(--border); padding-top:12px;">
+                <input type="text" id="comp-chat-input" class="form-ctrl" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendCompanyChatMessage()">
+                <button class="btn btn-purple btn-sm" onclick="sendCompanyChatMessage()">Send</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 7: COMPANY PROFILE -->
+        <section id="tab-company-profile" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <h1>Company Business Profile</h1>
+              <p>Manage corporate information, contact person, industry specialization, and verified hiring status.</p>
+            </div>
+            <button class="btn btn-purple btn-sm" onclick="showToast('Company profile changes saved!')">Save Changes</button>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 2fr; gap:24px;">
+            <div class="card" style="text-align:center;">
+              <div style="width:84px; height:84px; border-radius:50%; background:linear-gradient(135deg, var(--primary) 0%, var(--lavender) 100%); color:#FFFFFF; font-weight:800; font-size:32px; display:grid; place-items:center; margin:0 auto 16px; box-shadow:0 6px 20px rgba(104,71,232,0.3);">
+                CO
+              </div>
+              <h3>Acme Technology Corp</h3>
+              <p style="color:var(--text-muted); font-size:14px; margin-bottom:12px;">FinTech & Enterprise SaaS</p>
+              <span class="tag purple">&check; Verified Enterprise Client</span>
+
+              <div style="margin-top:24px; padding-top:16px; border-top:1px solid var(--border); text-align:left; font-size:13.5px; color:var(--text-muted);">
+                <p style="margin-bottom:6px;"><strong>Hiring Status:</strong> Actively Hiring</p>
+                <p style="margin-bottom:6px;"><strong>Member Since:</strong> March 2026</p>
+                <p><strong>Payment Method:</strong> Escrow Verified</p>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3 style="margin-bottom:18px;">Edit Business Information</h3>
+              <div class="grid2">
+                <div class="field">
+                  <label for="c-name">Company Name</label>
+                  <input type="text" id="c-name" class="form-ctrl" value="Acme Technology Corp">
+                </div>
+                <div class="field">
+                  <label for="c-contact">Contact Person</label>
+                  <input type="text" id="c-contact" class="form-ctrl" value="Sarah Jenkins">
+                </div>
+                <div class="field">
+                  <label for="c-email">Work Email</label>
+                  <input type="email" id="c-email" class="form-ctrl" value="testcompany@example.com" readonly style="background:#F9FAFB;">
+                </div>
+                <div class="field">
+                  <label for="c-phone">Phone Number</label>
+                  <input type="text" id="c-phone" class="form-ctrl" value="+1 (555) 392-8172">
+                </div>
+                <div class="field">
+                  <label for="c-industry">Industry</label>
+                  <input type="text" id="c-industry" class="form-ctrl" value="Enterprise Software / SaaS">
+                </div>
+                <div class="field">
+                  <label for="c-country">Country</label>
+                  <input type="text" id="c-country" class="form-ctrl" value="United States">
+                </div>
+                <div class="field full">
+                  <label for="c-desc">About Company</label>
+                  <textarea id="c-desc" class="form-ctrl" rows="3">Acme Technology builds next-generation cloud workflow and legal compliance tools for global enterprises.</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- CREATE AGREEMENT MODAL -->
+  <div class="modal-overlay" id="agr-modal">
+    <div class="modal-card" style="max-width:720px;">
+      <button class="modal-close" onclick="closeAgreementModal()">&times;</button>
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+        <div style="width:36px; height:36px; border-radius:10px; background:rgba(104,71,232,0.12); color:var(--primary); display:grid; place-items:center; font-size:18px;">
+          &#128221;
+        </div>
+        <h3 style="margin:0;">Create Agreement Draft</h3>
+      </div>
+      <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Select an applicant from your job postings to review their profile and generate tailored contract terms.</p>
+
+      <form id="agr-form" onsubmit="saveAgreement(event)">
+        <!-- Hidden database IDs so company never has to enter numeric IDs -->
+        <input type="hidden" id="agr-job-id" required>
+        <input type="hidden" id="agr-freelancer-id" required>
+
+        <!-- Dynamic Selectors for Job and Applicant Freelancer -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:14px;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label style="font-weight:600;">1. Select Job Posting <span style="color:var(--danger);">*</span></label>
+            <select id="agr-job-select" class="form-ctrl" onchange="onAgreementJobSelected(this.value)" required>
+              <option value="">-- Choose a Posted Job --</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label style="font-weight:600;">2. Select Applicant Freelancer <span style="color:var(--danger);">*</span></label>
+            <select id="agr-freelancer-select" class="form-ctrl" onchange="onAgreementFreelancerSelected(this.value)" required disabled>
+              <option value="">-- Select a Job first --</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Dynamic Alert when no applicants for chosen job -->
+        <div id="agr-no-applicants-alert" style="display:none; background:#FFFBEB; border:1px solid #FDE68A; color:#B45309; padding:12px 14px; border-radius:10px; font-size:13px; margin-bottom:16px;">
+          &#9888; <strong>No applicants found for this job yet.</strong> Wait for freelancers to submit proposals or select another job from the dropdown above.
+        </div>
+
+        <!-- FREELANCER PROFILE PREVIEW CARD -->
+        <div id="agr-freelancer-preview" style="display:none; background:#F8FAFC; border:1.5px solid #E2E8F0; border-radius:14px; padding:18px; margin-bottom:20px; transition:all 0.2s ease;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div id="prev-avatar" style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg, var(--primary) 0%, var(--lavender) 100%); color:#FFFFFF; font-weight:700; font-size:18px; display:grid; place-items:center; box-shadow:0 4px 12px rgba(104,71,232,0.25);">
+                FL
+              </div>
+              <div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <h4 id="prev-name" style="margin:0; font-size:16px; font-weight:700;">Freelancer Name</h4>
+                  <span id="prev-exp-badge" class="tag lo" style="font-size:11px;">Intermediate</span>
+                </div>
+                <div style="font-size:12.5px; color:var(--text-muted); margin-top:2px;">
+                  <span id="prev-email">email@example.com</span> &bull; <span id="prev-country">Country</span>
+                </div>
+              </div>
+            </div>
+            <div style="background:#FFFFFF; border:1px solid var(--border); border-radius:10px; padding:8px 14px; text-align:right;">
+              <small style="color:var(--text-muted); font-size:11px; text-transform:uppercase; font-weight:700; display:block;">Proposed Bid</small>
+              <strong id="prev-bid" style="font-size:18px; color:#059669;">$0</strong>
+              <span id="prev-days" style="font-size:12px; color:var(--text-muted); display:block;">0 days delivery</span>
+            </div>
+          </div>
+
+          <!-- Skills & Portfolio -->
+          <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:12px;" id="prev-skills-container">
+            <!-- Dynamic skill tags -->
+          </div>
+
+          <!-- Cover letter / Statement -->
+          <div style="background:#FFFFFF; border-left:3px solid var(--primary); border-radius:6px; padding:10px 14px; font-size:13px; color:#334155;">
+            <div style="font-weight:600; font-size:12px; color:var(--text-muted); margin-bottom:4px; text-transform:uppercase;">Applicant's Proposal Note:</div>
+            <div id="prev-cover-letter" style="line-height:1.5; font-style:italic;">Proposal text...</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label style="font-weight:600;">Agreement Title</label>
+          <input type="text" id="agr-title" class="form-ctrl" required placeholder="Master Freelance Services Agreement">
+        </div>
+
+        <div class="form-group">
+          <label style="font-weight:600;">Project Scope & Deliverables</label>
+          <textarea id="agr-scope" class="form-ctrl" rows="3" required placeholder="Detailed statement of work..."></textarea>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+          <div class="form-group">
+            <label style="font-weight:600;">Total Amount ($)</label>
+            <input type="number" id="agr-amount" class="form-ctrl" required value="4500">
+          </div>
+          <div class="form-group">
+            <label style="font-weight:600;">Advance Deposit (%)</label>
+            <input type="number" id="agr-advance" class="form-ctrl" required value="30">
+          </div>
+          <div class="form-group">
+            <label style="font-weight:600;">Payment Due Days</label>
+            <input type="number" id="agr-days" class="form-ctrl" required value="15">
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group">
+            <label style="font-weight:600;">Revision Limit</label>
+            <input type="number" id="agr-revs" class="form-ctrl" required value="3">
+          </div>
+          <div class="form-group">
+            <label style="font-weight:600;">Maintenance Warranty</label>
+            <input type="text" id="agr-maint" class="form-ctrl" value="30 days bug fixing warranty">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label style="font-weight:600;">Intellectual Property Terms</label>
+          <input type="text" id="agr-ip" class="form-ctrl" value="Client receives full copyright upon 100% payment receipt">
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px;">
+          <button type="button" class="btn btn-line btn-sm" onclick="closeAgreementModal()">Cancel</button>
+          <button type="submit" class="btn btn-green btn-sm" id="agr-submit-btn" disabled>Draft & Dispatch to Freelancer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DIRECT MILESTONE PAYMENT RELEASE MODAL -->
+  <div class="modal-overlay" id="pay-modal">
+    <div class="modal-card" style="max-width:520px; padding:0; overflow:hidden; border-radius:18px; box-shadow:0 25px 70px rgba(12,35,64,0.35);">
+      
+      <!-- Modal Header -->
+      <div style="background:linear-gradient(135deg, #064E3B 0%, #059669 100%); color:#FFFFFF; padding:22px 24px; position:relative;">
+        <button class="modal-close" onclick="closeMakePaymentModal()" style="color:#FFFFFF; top:18px; right:18px; font-size:24px; opacity:0.85; transition:opacity 0.2s;">&times;</button>
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+          <span style="background:rgba(255,255,255,0.2); color:#FFFFFF; font-size:11px; font-weight:800; padding:3px 8px; border-radius:6px; text-transform:uppercase; letter-spacing:0.5px;">Direct Escrow Disbursement</span>
+          <span class="tag lo" style="background:#ECFDF5; color:#059669; font-weight:800;">&check; VERIFIED</span>
+        </div>
+        <h2 style="margin:2px 0 4px; font-size:19px; color:#FFFFFF;">Release Milestone Payment</h2>
+        <p style="margin:0; font-size:13px; color:#D1FAE5;">Authorize and release verified escrow funds directly to contractor.</p>
+      </div>
+
+      <div style="padding:22px 26px;">
+        <!-- Payment Breakdown Card -->
+        <div style="background:#F0FDF4; border:1.5px solid #BBF7D0; border-radius:14px; padding:18px 20px; margin-bottom:18px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+            <div>
+              <span style="font-size:11px; text-transform:uppercase; font-weight:800; color:#15803D; letter-spacing:0.5px;">Milestone Deliverable</span>
+              <div style="font-weight:700; font-size:16px; color:#064E3B; margin-top:2px;" id="pay-modal-title">Milestone Payment</div>
+              <div style="font-size:13px; color:#166534; margin-top:2px;">
+                Contractor: <strong id="pay-modal-freelancer">Freelancer Name</strong> &bull; <span id="pay-modal-project">Project</span>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <span style="font-size:11px; font-weight:700; color:#15803D; text-transform:uppercase;">Release Amount</span>
+              <div style="font-size:24px; font-weight:900; color:#064E3B; line-height:1.2;" id="rzp-inr-display">$0.00</div>
+              <small style="color:#166534; font-size:12px; font-weight:600;" id="pay-modal-amount">($0.00 USD)</small>
+            </div>
+          </div>
+        </div>
+
+        <input type="hidden" id="pay-id">
+
+        <div class="form-group" style="margin-bottom:16px;">
+          <label style="font-size:13px; font-weight:600; color:var(--text); display:block; margin-bottom:6px;">Release Notes / Review Feedback (Optional)</label>
+          <input type="text" id="pay-notes" class="form-ctrl form-ctrl-sm" placeholder="e.g. Verified milestone deliverables and approved." value="Verified deliverable completion and approved release.">
+        </div>
+
+        <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:10px; padding:12px 14px; margin-bottom:18px; font-size:12.5px; color:#334155;">
+          <strong>⚡ Settlement Details:</strong>
+          <ul style="margin:6px 0 0; padding-left:18px; line-height:1.6;">
+            <li>Status will immediately change to <strong>PAID & DISBURSED</strong>.</li>
+            <li>Linked milestone task will be marked as <strong>COMPLETED (100%)</strong>.</li>
+            <li>Contractor receives +200 reputation reward points and instant confirmation.</li>
+          </ul>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+          <button type="button" class="btn btn-line btn-sm" onclick="closeMakePaymentModal()">Cancel</button>
+          
+          <button type="button" class="btn btn-green btn-sm" id="btn-release-submit" onclick="submitDirectPaymentRelease()" style="padding:10px 22px; font-weight:800; font-size:13.5px; display:flex; align-items:center; gap:6px;">
+            <span>💸 Confirm & Release Payment</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FULL AGREEMENT VIEWER & OFFICIAL DIGITAL CORPORATE SEAL MODAL -->
+  <div class="modal" id="view-agreement-modal">
+    <div class="modal-box" style="max-width:820px; max-height:92vh; overflow-y:auto; padding:0; border-radius:18px; box-shadow:0 25px 70px rgba(30,27,75,0.35);">
+      
+      <!-- Contract Modal Header -->
+      <div style="background:linear-gradient(135deg, #1E1B4B 0%, #312E81 100%); color:#FFFFFF; padding:22px 28px; position:relative; border-bottom:3px solid #818CF8;">
+        <button class="modal-close" onclick="closeViewAgreementModal()" style="color:#FFFFFF; top:18px; right:18px; font-size:24px; opacity:0.85; transition:opacity 0.2s;">&times;</button>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; padding-right:36px; flex-wrap:wrap; gap:8px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <img src="assets/img/logo-horizontal.png" alt="ClauseLens" style="height:28px; width:auto; filter:brightness(0) invert(1);">
+            <span class="portal-badge" style="background:rgba(255,255,255,0.2); color:#FFFFFF; font-weight:700;">Smart Escrow Contract</span>
+          </div>
+          <span class="tag lo" id="view-agr-status-tag" style="background:#ECFDF5; color:#059669; font-weight:700;">&check; VERIFIED CONTRACT</span>
+        </div>
+        <h2 id="view-agr-modal-title" style="margin:4px 0 6px; font-size:20px; color:#FFFFFF;">Master Agreement Title</h2>
+        <div style="font-size:13px; color:#C7D2FE; display:flex; gap:16px; flex-wrap:wrap;">
+          <span>Client: <strong id="view-agr-company" style="color:#FFFFFF;">Company Name</strong></span>
+          <span>Contractor: <strong id="view-agr-freelancer" style="color:#FFFFFF;">Freelancer Name</strong></span>
+          <span id="view-agr-date">Date: 2026-10-24</span>
+        </div>
+      </div>
+
+      <!-- Contract Key Terms Ribbon -->
+      <div style="background:#EEF2FF; border-bottom:1px solid #E0E7FF; padding:14px 28px; display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:12px;">
+        <div>
+          <span style="font-size:11px; text-transform:uppercase; color:#4F46E5; font-weight:700; display:block;">Total Consideration</span>
+          <strong id="view-agr-amount" style="font-size:17px; color:#1E1B4B;">$0.00</strong>
+          <small id="view-agr-inr" style="display:block; color:#6366F1; font-size:11.5px; font-weight:600;">(₹0 INR)</small>
+        </div>
+        <div>
+          <span style="font-size:11px; text-transform:uppercase; color:#4F46E5; font-weight:700; display:block;">Advance Escrow</span>
+          <strong id="view-agr-advance" style="font-size:16px; color:#1E1B4B;">30%</strong>
+          <small style="display:block; color:var(--text-muted); font-size:11px;">Deposited to Escrow</small>
+        </div>
+        <div>
+          <span style="font-size:11px; text-transform:uppercase; color:#4F46E5; font-weight:700; display:block;">Payment Due Days</span>
+          <strong id="view-agr-days" style="font-size:16px; color:#1E1B4B;">15 Days</strong>
+          <small style="display:block; color:var(--text-muted); font-size:11px;">Turnaround window</small>
+        </div>
+        <div>
+          <span style="font-size:11px; text-transform:uppercase; color:#4F46E5; font-weight:700; display:block;">Revisions Cap</span>
+          <strong id="view-agr-revs" style="font-size:16px; color:#1E1B4B;">3 Rounds</strong>
+          <small style="display:block; color:var(--text-muted); font-size:11px;">Included per phase</small>
+        </div>
+      </div>
+
+      <!-- Contract Body Paper -->
+      <div style="padding:28px;">
+        <div class="contract-paper">
+          <div id="view-agr-body-text" style="white-space:pre-wrap; font-size:13.5px; line-height:1.75; color:#1E293B;">
+            Loading agreement clauses...
+          </div>
+
+          <!-- OFFICIAL DUAL VERIFICATION & CORPORATE SEAL SECTION -->
+          <div class="contract-seal-container">
+            <!-- Left: Client Corporate Seal -->
+            <div class="official-corporate-seal" id="seal-company-card">
+              <div class="seal-stamp-graphic">
+                <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+              <div style="flex:1;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="font-size:11px; font-weight:800; text-transform:uppercase; color:#A16207; letter-spacing:0.5px;">Official Corporate Seal</span>
+                  <span class="tag lo" style="font-size:10px; background:#FEF08A; color:#854D0E; font-weight:800;">VERIFIED</span>
+                </div>
+                <h4 id="seal-company-name" style="margin:3px 0 2px; font-size:15px; color:#713F12; font-weight:800; text-transform:uppercase;">APEX SOLUTION</h4>
+                <div style="font-size:11px; color:#A16207; font-family:monospace;" id="seal-company-hash">SHA256:7f83b1657ff1...</div>
+                <div style="font-size:11.5px; color:#854D0E; margin-top:3px; font-weight:600;">
+                  &check; Digitally Signed & Sealed by Hiring Client
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Freelancer Digital Acceptance Card -->
+            <div class="freelancer-signature-card" id="seal-freelancer-card">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-size:11px; font-weight:800; text-transform:uppercase; color:#64748B; letter-spacing:0.5px;">Contractor Digital Signature</span>
+                  <span id="seal-fl-status-badge" class="tag md" style="font-size:10.5px; font-weight:700;">AWAITING SIGNATURE</span>
+                </div>
+                <div class="cursive-signature" id="seal-fl-signature">VISHAL R R</div>
+                <div style="font-size:11px; color:#64748B; font-family:monospace;" id="seal-fl-hash">
+                  PENDING FREELANCER DIGITAL CONSENT
+                </div>
+              </div>
+              <div id="seal-fl-confirm-text" style="font-size:11.5px; color:#64748B; margin-top:6px;">
+                Signature applies upon clicking "Accept & Sign Agreement".
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Bottom Actions -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:20px;">
+          <div style="display:flex; gap:10px;">
+            <button type="button" class="btn btn-line btn-sm" onclick="window.print()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Print / Save PDF
+            </button>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button type="button" class="btn btn-line btn-sm" onclick="closeViewAgreementModal()">Close</button>
+            <button type="button" class="btn btn-green btn-sm" id="btn-comp-modal-accept" onclick="acceptCurrentModalAgreement()" style="padding:9px 20px; font-weight:700;">
+              ✍️ Approve & Seal Agreement
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/company.js"></script>
+  <script src="js/email-center.js"></script>
+</body>
+</html>

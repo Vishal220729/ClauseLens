@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Freelancer Portal — ClauseLens</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="assets/img/favicon.png">
+</head>
+<body data-dashboard="freelancer" data-login="freelancer-login.html">
+
+  <div class="dash-shell">
+    <!-- TOP BAR -->
+    <header class="dash-topbar">
+      <div class="dash-top-left">
+        <a class="brand" href="freelancer-dashboard.html" style="text-decoration:none;">
+          <img src="assets/img/logo-horizontal.png" alt="ClauseLens" style="height:34px; width:auto; filter: drop-shadow(0 2px 8px rgba(104,71,232,0.2));">
+        </a>
+        <span class="portal-badge">Freelancer Workspace</span>
+      </div>
+
+      <div class="dash-user-ctrl">
+        <!-- Reward Points Badge -->
+        <div style="background:#FAF8FF; color:var(--primary); border:1.5px solid var(--lavender); padding:6px 14px; border-radius:var(--r-pill); font-weight:700; font-size:13.5px; display:flex; align-items:center; gap:6px; box-shadow:var(--shadow-sm);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#6847E8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span id="user-points">0</span> Reward Pts
+        </div>
+
+        <!-- Notifications Center -->
+        <div class="notif-wrapper" id="notif-wrapper">
+          <button class="notif-bell" id="notif-bell-btn" onclick="toggleNotifications(event)" aria-label="Notifications" type="button" title="View Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <span class="notif-badge" id="notif-count" style="display:none;">0</span>
+          </button>
+
+          <div class="notif-dropdown" id="notif-dropdown">
+            <div class="notif-header">
+              <div class="notif-title-wrap">
+                <span class="notif-title">Notifications</span>
+                <span class="notif-unread-pill" id="notif-unread-pill" style="display:none;">0 new</span>
+              </div>
+              <button class="notif-mark-read-btn" onclick="markAllNotificationsRead(event)" type="button" title="Mark all notifications as read">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Mark all read
+              </button>
+            </div>
+            <div class="notif-list" id="notif-list">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <span style="font-weight:600; font-size:14px;" id="who">Freelancer</span>
+        <button class="btn btn-line btn-sm" id="logout" type="button">Log Out</button>
+      </div>
+    </header>
+
+    <!-- DASHBOARD BODY WITH SIDEBAR NAVIGATION -->
+    <div class="dash-body">
+      <aside class="dash-nav">
+        <a href="#overview" class="active" onclick="switchTab('overview')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard Overview
+        </a>
+        <a href="#profile" onclick="switchTab('profile')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          My Profile
+        </a>
+        <a href="#browse-jobs" onclick="switchTab('browse-jobs')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          Find Freelance Work
+        </a>
+        <a href="#my-applications" onclick="switchTab('my-applications')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+          My Applications
+        </a>
+        <a href="#agreements" id="nav-agreements" onclick="switchTab('agreements')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+          Client Agreements
+          <span class="badge-count" id="freelancer-agr-badge" style="display:none; margin-left:auto; background:#EF4444; color:#FFFFFF; font-size:11px; font-weight:800; padding:2px 7px; border-radius:10px;">0</span>
+        </a>
+        <a href="#analyzer" onclick="switchTab('analyzer')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><path d="M11 8v6M8 11h6"/></svg>
+          AI Contract Analyzer
+        </a>
+        <a href="#policy-builder" onclick="switchTab('policy-builder')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Policy Builder
+        </a>
+        <a href="#tasks" onclick="switchTab('tasks')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>
+          Tasks & Check-ins
+        </a>
+        <a href="#payments" onclick="switchTab('payments')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Earnings & Payments
+        </a>
+        <a href="#rewards" onclick="switchTab('rewards')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Rewards & Achievements
+        </a>
+        <a href="#chat" onclick="switchTab('chat')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Project Chatbox
+        </a>
+      </aside>
+
+      <main class="dash-content">
+
+        <!-- TAB 1: OVERVIEW -->
+        <section id="tab-overview" class="tab-pane">
+          <div class="page-title-box">
+            <div>
+              <h1>Welcome to Your Freelancer Dashboard</h1>
+              <p>Monitor your job proposals, incoming contracts, risk alerts, and payment milestones.</p>
+            </div>
+            <button class="btn btn-green btn-sm" onclick="switchTab('browse-jobs')">Find Work &rarr;</button>
+          </div>
+
+          <div class="metric-cards" style="margin-bottom:24px; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));">
+            <div class="m-card" style="background:linear-gradient(135deg, #FAF5FF 0%, #FFFFFF 100%); border:1.5px solid #C084FC; box-shadow:0 4px 16px rgba(126,34,206,0.08);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <small style="color:#7E22CE; font-weight:700;">Wallet Balance</small>
+                <span class="tag purple" style="font-size:10px; padding:2px 7px;">Instant Payout</span>
+              </div>
+              <strong id="card-wallet" style="color:#581C87; font-size:26px;">$0.00</strong>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+                <em id="card-wallet-inr" style="color:#7E22CE; font-weight:700; font-style:normal; font-size:12px;">≈ ₹0.00 INR</em>
+                <button class="btn btn-purple btn-sm" style="padding:3px 9px; font-size:11px;" onclick="openWithdrawModal()">Withdraw &rarr;</button>
+              </div>
+            </div>
+            <div class="m-card">
+              <small>Reward Points Balance</small>
+              <strong id="card-points">0</strong>
+              <em>&starf; Earned from verified milestone check-ins</em>
+            </div>
+            <div class="m-card">
+              <small>Active Applications</small>
+              <strong id="card-apps">0</strong>
+              <em>Proposals submitted to clients</em>
+            </div>
+            <div class="m-card">
+              <small>Agreements Analyzed</small>
+              <strong id="card-reports">0</strong>
+              <em>Protected with AI risk verification</em>
+            </div>
+            <div class="m-card">
+              <small>Client Agreements</small>
+              <strong id="card-agrs">0</strong>
+              <em>Formal contracts & binding terms</em>
+            </div>
+          </div>
+
+          <!-- Dynamic Agreement Review Banner -->
+          <div id="overview-agr-alert" style="display:none; background:linear-gradient(135deg, #FAF5FF 0%, #F3E8FF 100%); border:1.5px solid #C084FC; border-radius:var(--r-md); padding:16px 20px; margin-bottom:24px; box-shadow:0 4px 14px rgba(192,132,252,0.15);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <div style="width:40px; height:40px; border-radius:10px; background:#7E22CE; color:#FFFFFF; display:grid; place-items:center; font-size:20px; box-shadow:0 4px 12px rgba(126,34,206,0.25);">
+                  &#128221;
+                </div>
+                <div>
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <span class="tag purple" style="font-size:11px;">Contract Awaiting Review</span>
+                    <span class="tag lo" style="background:#FEF08A; color:#854D0E; font-size:10.5px; font-weight:800;">OFFICIAL CORPORATE SEAL</span>
+                  </div>
+                  <h4 id="overview-agr-title" style="margin:2px 0; color:#581C87; font-size:15.5px;">Master Agreement</h4>
+                  <p style="margin:0; font-size:13px; color:#7E22CE;">Client has prepared contract terms with official corporate seal. Review clauses, scan with AI, and sign to activate escrow.</p>
+                </div>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="btn btn-purple btn-sm" onclick="switchTab('agreements')">Review & Sign Agreement &rarr;</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3 style="margin-bottom:16px;">Quick Action Guide</h3>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:16px;">
+              <div style="background:#F0FDF4; border:1px solid #BBF7D0; padding:18px; border-radius:var(--r-md);">
+                <h4 style="color:#166534; margin-bottom:6px;">1. Configure Your Policy</h4>
+                <p style="font-size:13.5px; color:#14532D; margin-bottom:12px;">Set your maximum payment due days, minimum advance %, and revision caps in the Policy Builder.</p>
+                <button class="btn btn-green btn-sm" onclick="switchTab('policy-builder')">Edit Policies &rarr;</button>
+              </div>
+
+              <div style="background:#EFF6FF; border:1px solid #BFDBFE; padding:18px; border-radius:var(--r-md);">
+                <h4 style="color:#1E40AF; margin-bottom:6px;">2. Scan Client Agreements</h4>
+                <p style="font-size:13.5px; color:#1E3A8A; margin-bottom:12px;">Before accepting a project, run the agreement text through our AI analyzer to catch unfair clauses.</p>
+                <button class="btn btn-line btn-sm" onclick="switchTab('analyzer')">Scan Agreement &rarr;</button>
+              </div>
+
+              <div style="background:#FEF3C7; border:1px solid #FDE68A; padding:18px; border-radius:var(--r-md);">
+                <h4 style="color:#92400E; margin-bottom:6px;">3. Halfway & Payment Check-ins</h4>
+                <p style="font-size:13.5px; color:#78350F; margin-bottom:12px;">Confirm 50% milestone progress and payment receipts to automatically earn platform reward points.</p>
+                <button class="btn btn-line btn-sm" onclick="switchTab('tasks')">View Tasks &rarr;</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 2: BROWSE JOBS -->
+        <section id="tab-browse-jobs" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <h1>Browse Freelance Jobs</h1>
+              <p>Explore verified client job listings and submit competitive proposals.</p>
+            </div>
+            <div style="display:flex; gap:10px;">
+              <select id="job-domain-filter" class="form-ctrl" style="width:200px;" onchange="loadBrowseJobs()">
+                <option value="All">All Domains</option>
+                <option value="Web Development">Web Development</option>
+                <option value="Mobile App Development">Mobile App Development</option>
+                <option value="UI/UX Design">UI/UX Design</option>
+                <option value="Content Writing">Content Writing</option>
+                <option value="Software Testing">Software Testing</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="jobs-container" style="display:grid; gap:16px;">
+            <p style="color:var(--text-muted);">Loading jobs...</p>
+          </div>
+        </section>
+
+        <!-- TAB 3: MY APPLICATIONS -->
+        <section id="tab-my-applications" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <h1>My Applications & Proposals</h1>
+              <p>Track the status of your submitted bids and ongoing projects.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="table-responsive">
+              <table class="clean-table" id="apps-table">
+                <thead>
+                  <tr>
+                    <th>Job Title</th>
+                    <th>Company</th>
+                    <th>Your Bid</th>
+                    <th>Delivery Days</th>
+                    <th>Status</th>
+                    <th>Applied Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="apps-tbody">
+                  <tr><td colspan="7">Loading proposals...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB: CLIENT AGREEMENTS & DIGITAL CONTRACTS -->
+        <section id="tab-agreements" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                <span class="portal-badge" style="background:#7E22CE; color:#FFFFFF; font-weight:700;">Dual-Acceptance Escrow Contracts</span>
+                <span class="tag lo" style="background:#ECFDF5; color:#059669; font-weight:700;">&check; Legally Binding</span>
+              </div>
+              <h1 style="margin:0 0 4px;">Client Contracts & Formal Agreements</h1>
+              <p style="margin:0; color:var(--text-muted); font-size:14px;">Review contracts drafted by hiring clients, inspect verified corporate seals, audit risk clauses with AI, and digitally sign agreements.</p>
+            </div>
+            <div style="display:flex; gap:10px;">
+              <button class="btn btn-line btn-sm" onclick="loadFreelancerAgreements()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                Refresh Agreements
+              </button>
+            </div>
+          </div>
+
+          <!-- Agreement Metrics Bento Grid -->
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:24px;">
+            <div class="card" style="margin-bottom:0; padding:20px; border-left:4px solid #059669;">
+              <span style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Active Binding Contracts</span>
+              <div style="font-size:26px; font-weight:800; color:var(--text); margin-top:4px;" id="agr-stat-active">0</div>
+              <small style="color:#059669; font-weight:600; font-size:12px;">Mutually signed & in progress</small>
+            </div>
+
+            <div class="card" style="margin-bottom:0; padding:20px; border-left:4px solid #D97706; background:#FFFDF7;">
+              <span style="font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Pending Client Drafts</span>
+              <div style="font-size:26px; font-weight:800; color:#D97706; margin-top:4px;" id="agr-stat-pending">0</div>
+              <small style="color:#B45309; font-weight:600; font-size:12px;">Action required &bull; Awaiting your review</small>
+            </div>
+
+            <div class="card" style="margin-bottom:0; padding:20px; border-left:4px solid #7E22CE; background:linear-gradient(135deg, #FFFFFF 0%, #FAF5FF 100%);">
+              <span style="font-size:12px; font-weight:700; color:#7E22CE; text-transform:uppercase; letter-spacing:0.5px;">Protected Contract Value</span>
+              <div style="font-size:26px; font-weight:800; color:#581C87; margin-top:4px;" id="agr-stat-value">$0.00</div>
+              <small style="color:#6B21A8; font-weight:600; font-size:12px;">Total escrowed compensation</small>
+            </div>
+          </div>
+
+          <!-- Dual Digital Seal Guarantee Card -->
+          <div style="background:#FAF8FF; border:1px solid rgba(104,71,232,0.25); border-radius:var(--r-md); padding:14px 18px; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:38px; height:38px; border-radius:50%; background:#FEF08A; border:2px solid #CA8A04; display:grid; place-items:center; color:#854D0E; font-size:18px;">
+                &#128737;
+              </div>
+              <div>
+                <strong style="font-size:14px; color:var(--text);">ClauseLens Dual-Signature & Escrow Guarantee:</strong>
+                <p style="margin:2px 0 0; font-size:13px; color:var(--text-muted);">Client agreements are digitally sealed by the company. Review full legal clauses, inspect the official corporate seal, run an AI Risk Scan, and digitally sign to activate milestones.</p>
+              </div>
+            </div>
+            <span class="tag lo" style="font-size:11.5px; font-weight:700;">+200 Reward Points on Signing</span>
+          </div>
+
+          <!-- Agreements Container -->
+          <div class="card">
+            <h3 style="margin-bottom:16px;">Client Agreements</h3>
+            <div id="freelancer-agreements-container" style="display:grid; gap:14px;">
+              <p style="color:var(--text-muted); padding:20px; text-align:center;">Loading incoming agreements...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: AI RISK ANALYZER (FULL FREELANCER SUITE) -->
+        <section id="tab-analyzer" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <span class="tag purple" style="margin-bottom:8px;">AI Legal Intelligence</span>
+              <h1>AI Contract Risk Analyzer</h1>
+              <p>Scan freelance contracts, agreements, and scopes of work to detect hidden risks, unfair liability, payment delays, and IP traps.</p>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <label for="sample-select" style="font-size:13px; font-weight:600; color:var(--text-muted);">Test Samples:</label>
+              <select id="sample-select" class="form-ctrl" style="width:260px;" onchange="loadPresetSample(this.value)">
+                <option value="">-- Choose Sample Contract --</option>
+                <option value="high-risk">High-Risk Freelance Agreement (Payment 90d, Unlimited Revisions)</option>
+                <option value="balanced">Balanced & Fair Web Services Contract</option>
+                <option value="ip-trap">Unfair IP Assignment & Strict Indemnity</option>
+                <option value="consulting-trap">Consulting Trap (24mo Non-Compete, Device Audit)</option>
+                <option value="liquidated-damages">Liquidated Damages & Bug-Free Warranty</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Informational Decision Support Notice -->
+          <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:var(--r-md); padding:12px 18px; margin-bottom:24px; display:flex; align-items:center; gap:12px; font-size:13.5px; color:#92400E;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B45309" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div>
+              <strong>Informational Decision Support:</strong> Automated analysis results are for negotiation guidance and risk discovery. They do not constitute formal legal counsel. Exact quotations are verified against source text.
+            </div>
+          </div>
+
+          <!-- STEP 1: INPUT / UPLOAD CARD -->
+          <div class="card" style="margin-bottom:28px;">
+            <div style="margin-bottom:18px;">
+              <h3>Step 1: Upload or Paste Agreement</h3>
+              <p style="color:var(--text-muted); font-size:14px;">Upload your contract document or load a curated test sample above.</p>
+            </div>
+
+            <!-- Drag & Drop Zone -->
+            <div class="upload-box" id="drop-zone" onclick="document.getElementById('file-input').click()">
+              <input type="file" id="file-input" style="display:none;" accept=".txt,.pdf,.docx" onchange="handleFileUpload(event)">
+              <div style="width:52px; height:52px; background:#FFFFFF; border-radius:50%; display:grid; place-items:center; margin:0 auto 12px; color:var(--primary); box-shadow:var(--shadow-sm);">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </div>
+              <strong style="font-size:16px; color:var(--text); display:block; margin-bottom:4px;" id="upload-label">
+                Drag & drop contract file here, or click to browse
+              </strong>
+              <span style="font-size:13px; color:var(--text-muted);">
+                Supported formats: TXT, PDF, DOCX (up to 15MB)
+              </span>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0 16px;">
+              <div class="form-group">
+                <label for="contract-type">Agreement Category</label>
+                <select id="contract-type" class="form-ctrl">
+                  <option value="Freelance Master Services Agreement">Freelance Master Services Agreement</option>
+                  <option value="Non-Disclosure Agreement (NDA)">Non-Disclosure Agreement (NDA)</option>
+                  <option value="Fixed-Price Statement of Work">Fixed-Price Statement of Work</option>
+                  <option value="Monthly Retainer Agreement">Monthly Retainer Agreement</option>
+                  <option value="Intellectual Property Transfer">Intellectual Property Transfer</option>
+                  <option value="General Commercial Contract">General Commercial Contract</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="user-role-perspective">Analyze From Perspective Of</label>
+                <select id="user-role-perspective" class="form-ctrl">
+                  <option value="freelancer" selected>Freelancer / Independent Contractor</option>
+                  <option value="company">Client / Hiring Company</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="contract-content">Contract Terms (Editable Text Content)</label>
+              <textarea id="contract-content" class="form-ctrl" rows="8" placeholder="Paste the client contract agreement text here..."></textarea>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+              <span style="font-size:13px; color:var(--text-muted);" id="char-count">0 characters</span>
+              <button class="btn btn-purple btn-lg" id="btn-run" onclick="startAnalysis()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><path d="M11 8v6M8 11h6"/></svg>
+                Analyze Contract Terms
+              </button>
+            </div>
+          </div>
+
+          <!-- PROGRESS INDICATOR -->
+          <div id="progress-card" class="card" style="display:none; text-align:center; padding:36px; margin-bottom:28px;">
+            <h3 id="progress-status">Evaluating Contract Clauses...</h3>
+            <p style="color:var(--text-muted); font-size:14px; margin-bottom:12px;" id="progress-detail">Comparing clauses against industry safety benchmarks...</p>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+            <small style="color:var(--text-muted); font-size:12px;" id="progress-pct">25% complete</small>
+          </div>
+
+          <!-- STEP 2: RESULTS SECTION -->
+          <div id="results-view" style="display:none;">
+
+            <!-- Overall Risk Card -->
+            <div class="card" style="margin-bottom:24px; border-top:4px solid var(--primary);">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px;">
+                <div>
+                  <span class="tag purple" style="margin-bottom:8px;">Analysis Complete</span>
+                  <h2 id="res-contract-name">Freelance Agreement Risk Profile</h2>
+                  <p style="color:var(--text-muted); font-size:14.5px;" id="res-summary-text">
+                    Identified risk factors requiring revision or clarification before signing.
+                  </p>
+                </div>
+                <div style="display:flex; gap:12px; align-items:center;">
+                  <button class="btn btn-line btn-sm" onclick="downloadReportCSV()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download Report (CSV)
+                  </button>
+                  <button class="btn btn-purple btn-sm" onclick="window.print()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                    Print / Save PDF
+                  </button>
+                </div>
+              </div>
+
+              <!-- Meter and Breakdown -->
+              <div class="risk-meter" style="margin-top:24px;">
+                <div class="risk-circle" id="risk-score-circle">
+                  <span class="score-num" id="res-score-num">45</span>
+                  <span class="score-lbl">Risk Score</span>
+                </div>
+
+                <div style="flex:1;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <strong style="font-size:18px;" id="res-class-lbl">High Commercial Risk</strong>
+                    <div style="display:flex; gap:8px;">
+                      <span class="tag critical" id="badge-crit">1 Critical</span>
+                      <span class="tag hi" id="badge-hi">2 High</span>
+                      <span class="tag md" id="badge-med">1 Medium</span>
+                      <span class="tag lo" id="badge-lo">3 Low</span>
+                    </div>
+                  </div>
+
+                  <!-- Distribution Segmented Bar -->
+                  <div class="dist-bar">
+                    <div class="dist-segment dist-crit" id="bar-crit" style="width:25%;"></div>
+                    <div class="dist-segment dist-hi" id="bar-hi" style="width:35%;"></div>
+                    <div class="dist-segment dist-med" id="bar-med" style="width:25%;"></div>
+                    <div class="dist-segment dist-lo" id="bar-lo" style="width:15%;"></div>
+                  </div>
+
+                  <div style="font-size:13px; color:var(--text-muted); display:flex; justify-content:space-between;">
+                    <span>Severe terms detected (Payment >60d, Unlimited Indemnity)</span>
+                    <span>Evaluated against ClauseLens safety index</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 12 EVALUATION CATEGORIES BENTO GRID -->
+            <h3 style="margin:30px 0 14px;">12 Key Legal & Commercial Dimensions</h3>
+            <div class="category-grid" id="cat-grid"></div>
+
+            <!-- FLAGGED CLAUSES LIST -->
+            <h3 style="margin:36px 0 16px;">Flagged Clauses & Negotiation Advice</h3>
+            <div id="flagged-list"></div>
+
+            <!-- REVISION EMAIL GENERATOR -->
+            <div class="card" style="margin-top:30px; background:linear-gradient(135deg, #FFFFFF 0%, #FAF8FF 100%);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                <div>
+                  <h3>Generated Revision Request Email (Ready to Send)</h3>
+                  <p style="color:var(--text-muted); font-size:14px;">Copy and send this professional, polite revision email to your client or counterparty.</p>
+                </div>
+                <button class="btn btn-purple btn-sm" onclick="copyEmailDraft()">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  Copy Email Draft
+                </button>
+              </div>
+              <textarea id="email-draft-box" class="form-ctrl" rows="7" readonly style="font-family:monospace; font-size:13.5px; background:#F8FAF9;"></textarea>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- TAB 5: POLICY BUILDER -->
+        <section id="tab-policy-builder" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <h1>Freelancer Policy Builder</h1>
+              <p>Configure your personal acceptable contract standards. Every analyzed agreement is checked against these rules.</p>
+            </div>
+            <button class="btn btn-green btn-sm" onclick="openAddRuleModal()">+ Add Custom Rule</button>
+          </div>
+
+          <div class="card">
+            <div class="table-responsive">
+              <table class="clean-table" id="policy-table">
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th>Rule Description</th>
+                    <th>Acceptable Standard</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="policy-tbody">
+                  <tr><td colspan="6">Loading policies...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 6: TASKS & REWARDS -->
+        <section id="tab-tasks" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+                <span class="tag purple">Milestone Engine</span>
+                <span id="timeline-badge-mode" class="tag lo">AI Smart Timeline</span>
+              </div>
+              <h1>Project Work Timeline & Tasks</h1>
+              <p>AI automatically analyzes project scope to establish milestone schedules and halfway check-ins, with full custom timeline control.</p>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+              <select id="timeline-project-select" class="form-ctrl" style="width:240px; font-weight:600;" onchange="onProjectSelectChanged(this.value)">
+                <option value="">Loading projects...</option>
+              </select>
+              <button class="btn btn-purple btn-sm" id="btn-ai-gen-timeline" onclick="triggerAiGenerateTimeline()" title="AI analyzes scope and creates automatic milestones">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                ✨ AI Auto Timeline
+              </button>
+              <button class="btn btn-line btn-sm" onclick="openCustomTimelineModal()" title="Customize milestone dates, start date, and target deadline">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                📅 Custom Timeline
+              </button>
+            </div>
+          </div>
+
+          <!-- Project Timeline Overview Card -->
+          <div class="timeline-overview-card" id="timeline-overview-card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+              <div>
+                <span class="tag low" id="card-proj-status" style="margin-bottom:6px;">ACTIVE</span>
+                <h2 id="card-proj-title" style="font-size:20px; margin:0 0 4px;">Loading Project Timeline...</h2>
+                <span style="font-size:13.5px; color:var(--text-muted);" id="card-proj-subtitle">Client: Verified Hiring Partner</span>
+              </div>
+              <div style="text-align:right;">
+                <span class="countdown-pill safe" id="card-days-left">⏳ Calculating...</span>
+                <div style="font-size:12px; color:var(--text-muted); margin-top:4px;" id="card-timeline-type">Mode: AI Automated</div>
+              </div>
+            </div>
+
+            <!-- 4-Stat Metric Strip -->
+            <div class="timeline-metric-strip">
+              <div class="m-col">
+                <small>Start Date</small>
+                <strong id="time-start-date">--</strong>
+              </div>
+              <div class="m-col">
+                <small>50% Halfway Checkpoint</small>
+                <strong id="time-halfway-date" style="color:#059669;">--</strong>
+              </div>
+              <div class="m-col">
+                <small>Target Delivery</small>
+                <strong id="time-deadline-date" style="color:var(--primary);">--</strong>
+              </div>
+              <div class="m-col">
+                <small>Milestones Completed</small>
+                <strong id="time-completed-stat">0 / 0</strong>
+              </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:13px; font-weight:700;">
+                <span>Overall Project Milestone Progress</span>
+                <span id="time-progress-num" style="color:var(--primary);">0%</span>
+              </div>
+              <div style="height:10px; background:var(--border-light); border-radius:var(--r-pill); overflow:hidden;">
+                <div id="time-progress-bar" style="width:0%; height:100%; background:linear-gradient(90deg, var(--primary) 0%, #10B981 100%); transition:width 0.4s ease;"></div>
+              </div>
+            </div>
+
+            <!-- Visual Horizontal Milestone Stepper -->
+            <div style="margin-top:20px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:13px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">Milestone Roadmap</span>
+                <small style="color:var(--text-muted);">Sequential Delivery Schedule</small>
+              </div>
+              <div class="timeline-stepper" id="timeline-stepper">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Halfway Check-in Prompt Banner (Exact Match with Dynamic Data) -->
+          <div id="halfway-banner" class="card" style="background:linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%); border-color:#6EE7B7; margin-bottom:24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+              <div>
+                <span class="tag lo" style="margin-bottom:6px;">Milestone Checkpoint</span>
+                <h3 id="halfway-task-title" style="color:#065F46; margin:4px 0 6px;">"Have you completed half of the work?"</h3>
+                <p id="halfway-task-desc" style="color:#047857; font-size:14px;">Confirming 50% milestone completion awards +100 reward points and updates your client.</p>
+              </div>
+              <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;" id="halfway-actions-wrap">
+                <button class="btn btn-green btn-sm" id="btn-halfway-yes" onclick="respondHalfway(true)">Yes, 50% Complete (+100 Pts)</button>
+                <button class="btn btn-purple btn-sm" id="btn-complete-phase" onclick="openCompletePhaseModal()" style="display:none;">🚀 Complete Phase (+150 Pts)</button>
+                <button class="btn btn-line btn-sm" id="btn-halfway-no" onclick="openExtensionModal()">Not Yet / Need Extension &rarr;</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Current Project Tasks -->
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px;">
+              <h3 style="margin:0;">Project Milestone Tasks (<span id="task-count-badge">0</span>)</h3>
+              <button class="btn btn-line btn-sm" onclick="openCustomTimelineModal()">+ Add Custom Task</button>
+            </div>
+            <div id="tasks-container" style="display:grid; gap:12px;">
+              <p style="color:var(--text-muted);">Loading project tasks...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 7: PAYMENT TRACKER & WALLET -->
+        <section id="tab-payments" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <h1>Earnings, Wallet & Payouts</h1>
+              <p>Direct escrow milestone deposits, live wallet balance, and instant withdrawal payouts to Bank / UPI.</p>
+            </div>
+            <button class="btn btn-purple btn-sm" onclick="openWithdrawModal()" style="display:flex; align-items:center; gap:6px;">
+              <span>💸</span> Withdraw Funds
+            </button>
+          </div>
+
+          <!-- WALLET BENTO & WITHDRAWAL HUB -->
+          <div class="card" style="background:linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%); color:#FFFFFF; border:none; border-radius:18px; padding:28px; box-shadow:0 12px 32px rgba(49,46,129,0.25); position:relative; overflow:hidden; margin-bottom:24px;">
+            <!-- Background glow accent -->
+            <div style="position:absolute; right:-40px; top:-40px; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle, rgba(168,85,247,0.35) 0%, transparent 70%); pointer-events:none;"></div>
+            
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:20px; position:relative; z-index:1;">
+              <div>
+                <div style="display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.15); backdrop-filter:blur(8px); padding:4px 12px; border-radius:20px; font-size:12px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; margin-bottom:12px; border:1px solid rgba(255,255,255,0.2);">
+                  <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#4ADE80; box-shadow:0 0 8px #4ADE80;"></span>
+                  ClauseLens Protected Freelancer Wallet
+                </div>
+                <div style="font-size:13.5px; opacity:0.85; margin-bottom:4px;">Available Balance for Immediate Withdrawal</div>
+                <div style="display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;">
+                  <span id="wallet-balance-usd" style="font-size:42px; font-weight:800; letter-spacing:-0.03em; color:#FFFFFF;">$0.00</span>
+                  <span id="wallet-balance-inr" style="font-size:18px; font-weight:700; color:#A7F3D0; background:rgba(16,185,129,0.2); padding:4px 12px; border-radius:8px; border:1px solid rgba(52,211,153,0.3);">≈ ₹0.00 INR</span>
+                </div>
+                <div style="margin-top:8px; font-size:12.5px; opacity:0.8;">
+                  &check; Direct milestone funds credited &bull; Zero withdrawal fees &bull; Instant UPI / Bank settlement
+                </div>
+              </div>
+
+              <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px;">
+                <button class="btn btn-sm" onclick="openWithdrawModal()" style="background:#22C55E; color:#FFFFFF; font-weight:800; font-size:15px; padding:12px 26px; border-radius:12px; border:none; box-shadow:0 6px 18px rgba(34,197,94,0.4); display:flex; align-items:center; gap:8px; cursor:pointer; transition:transform 0.15s ease;">
+                  <span style="font-size:18px;">💸</span> Withdraw Funds
+                </button>
+                <div style="font-size:12px; opacity:0.8; text-align:right;">Payouts: UPI, NEFT, IMPS, PayPal</div>
+              </div>
+            </div>
+
+            <!-- Bento Stats Grid -->
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:16px; margin-top:24px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.15); position:relative; z-index:1;">
+              <div style="background:rgba(255,255,255,0.08); padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.12);">
+                <div style="font-size:12px; opacity:0.75; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;">Total Lifetime Earned</div>
+                <div id="wallet-total-earned" style="font-size:22px; font-weight:800; color:#FFFFFF;">$0.00</div>
+                <div id="wallet-total-earned-inr" style="font-size:12px; opacity:0.75; margin-top:2px;">≈ ₹0.00 INR</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.08); padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.12);">
+                <div style="font-size:12px; opacity:0.75; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;">Total Withdrawn</div>
+                <div id="wallet-total-withdrawn" style="font-size:22px; font-weight:800; color:#FDE047;">$0.00</div>
+                <div id="wallet-total-withdrawn-inr" style="font-size:12px; opacity:0.75; margin-top:2px;">≈ ₹0.00 INR</div>
+              </div>
+
+              <div style="background:rgba(255,255,255,0.08); padding:14px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.12);">
+                <div style="font-size:12px; opacity:0.75; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:4px;">Security Status</div>
+                <div style="font-size:18px; font-weight:800; color:#67E8F9;">100% Escrow Protected</div>
+                <div style="font-size:12px; opacity:0.75; margin-top:2px;">Encrypted Settlements</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- WITHDRAWAL HISTORY -->
+          <div class="card" style="margin-bottom:24px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <div>
+                <h3 style="margin:0;">Withdrawal & Payout History</h3>
+                <small style="color:var(--text-muted);">Track your recent fund transfers and payout receipts</small>
+              </div>
+              <button class="btn btn-line btn-sm" onclick="loadWallet()">Refresh History</button>
+            </div>
+            <div id="withdrawals-container">
+              <p style="color:var(--text-muted); font-size:13.5px;">Loading withdrawals...</p>
+            </div>
+          </div>
+
+          <!-- Milestone Payment Records -->
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+              <div>
+                <h3 style="margin:0;">Milestone Payment Receipts</h3>
+                <small style="color:var(--text-muted);">Funds released by clients directly into your wallet</small>
+              </div>
+              <button class="btn btn-line btn-sm" onclick="loadPayments()">Refresh Payments</button>
+            </div>
+            <div id="payments-container" style="display:grid; gap:12px;">
+              <p style="color:var(--text-muted);">Loading payments...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 8: CHAT -->
+        <section id="tab-chat" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <h1>Project Chatbox</h1>
+              <p>Private, database-backed conversations with your client for contract discussions and updates.</p>
+            </div>
+          </div>
+
+          <div class="card" style="display:grid; grid-template-columns:260px 1fr; gap:20px; height:500px; padding:0; overflow:hidden;">
+            <!-- Conversation List -->
+            <div style="border-right:1px solid var(--border); overflow-y:auto; padding:16px;" id="conv-list">
+              <p style="color:var(--text-muted); font-size:13px;">Loading conversations...</p>
+            </div>
+
+            <!-- Active Messages Panel -->
+            <div style="display:flex; flex-direction:column; justify-content:space-between; padding:20px;">
+              <div id="chat-header" style="font-weight:700; border-bottom:1px solid var(--border); padding-bottom:10px; font-size:15px;">
+                Select a conversation
+              </div>
+              <div id="chat-messages" style="flex:1; overflow-y:auto; padding:16px 0; display:flex; flex-direction:column; gap:10px;">
+                <p style="color:var(--text-muted); text-align:center; margin-top:40px;">Select a conversation on the left to chat.</p>
+              </div>
+              <div style="display:flex; gap:10px; border-top:1px solid var(--border); padding-top:12px;">
+                <input type="text" id="chat-input" class="form-ctrl" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendChatMessage()">
+                <button class="btn btn-purple btn-sm" onclick="sendChatMessage()">Send</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 9: MY PROFILE -->
+        <section id="tab-profile" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <h1>Freelancer Profile & Portfolio</h1>
+              <p>Manage your professional identity, hourly rate, portfolio showcase, and verified skills.</p>
+            </div>
+            <button class="btn btn-purple btn-sm" onclick="saveProfile()">Save Changes</button>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 2fr; gap:24px;">
+            <!-- Left Profile Card -->
+            <div class="card" style="text-align:center;">
+              <div style="width:84px; height:84px; border-radius:50%; background:linear-gradient(135deg, var(--primary) 0%, var(--lavender) 100%); color:#FFFFFF; font-weight:800; font-size:32px; display:grid; place-items:center; margin:0 auto 16px; box-shadow:0 6px 20px rgba(104,71,232,0.3);">
+                FL
+              </div>
+              <h3 id="profile-name-display">Alex Mercer</h3>
+              <p style="color:var(--text-muted); font-size:14px; margin-bottom:12px;" id="profile-domain-display">Fullstack Web Developer</p>
+              <span class="tag low" style="margin-bottom:20px;">&check; Verified Pro</span>
+
+              <!-- Completeness Meter -->
+              <div style="background:var(--lavender-subtle); border-radius:var(--r-md); padding:16px; text-align:left; border:1px solid var(--border);">
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:13px; font-weight:700;">
+                  <span>Profile Completeness</span>
+                  <span style="color:var(--primary);">85%</span>
+                </div>
+                <div style="height:8px; background:#FFFFFF; border-radius:var(--r-pill); overflow:hidden;">
+                  <div style="width:85%; height:100%; background:var(--primary);"></div>
+                </div>
+                <small style="display:block; margin-top:8px; color:var(--text-muted); font-size:11.5px;">Add video intro for +15% boost</small>
+              </div>
+            </div>
+
+            <!-- Right Edit Form -->
+            <div class="card">
+              <h3 style="margin-bottom:18px;">Edit Professional Profile</h3>
+              <div class="grid2">
+                <div class="field">
+                  <label for="prof-fullname">Full Name</label>
+                  <input type="text" id="prof-fullname" class="form-ctrl" value="Alex Mercer">
+                </div>
+                <div class="field">
+                  <label for="prof-email">Email Address</label>
+                  <input type="email" id="prof-email" class="form-ctrl" value="testfreelancer@example.com" readonly style="background:#F9FAFB;">
+                </div>
+                <div class="field">
+                  <label for="prof-country">Country / Region</label>
+                  <input type="text" id="prof-country" class="form-ctrl" value="United States">
+                </div>
+                <div class="field">
+                  <label for="prof-hourly">Hourly Rate ($ USD)</label>
+                  <input type="number" id="prof-hourly" class="form-ctrl" value="85">
+                </div>
+                <div class="field full">
+                  <label for="prof-portfolio">Portfolio / GitHub Website URL</label>
+                  <input type="url" id="prof-portfolio" class="form-ctrl" value="https://alexmercer.dev">
+                </div>
+                <div class="field full">
+                  <label for="prof-skills">Skills & Frameworks</label>
+                  <input type="text" id="prof-skills" class="form-ctrl" value="JavaScript, Java, Spring Boot, React, Node.js, REST APIs">
+                </div>
+                <div class="field full">
+                  <label for="prof-bio">Bio & Professional Summary</label>
+                  <textarea id="prof-bio" class="form-ctrl" rows="3">Senior fullstack software engineer with 6+ years building SaaS applications and secure cloud services.</textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 10: REWARDS & ACHIEVEMENTS -->
+        <section id="tab-rewards" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <h1>Rewards, Badges & Achievements</h1>
+              <p>Earn platform points, build verified client trust, and unlock premium safety badges.</p>
+            </div>
+            <span class="tag purple" style="font-size:13px; padding:6px 14px;">Level 3 Shield Member</span>
+          </div>
+
+          <!-- Hero Trophy Card -->
+          <div class="reward-card" style="margin-bottom:28px;">
+            <div class="trophy-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7"/><path d="M14 14.66V17c0 .55.45 1 1 1h2"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+            </div>
+            <div style="flex:1;">
+              <h2 style="color:var(--text); margin-bottom:4px;">You have earned <span id="rewards-total-pts" style="color:var(--primary);">1,450</span> Reward Points</h2>
+              <p style="color:var(--text-muted); font-size:14px; margin-bottom:12px;">Points are automatically awarded for on-time halfway milestone check-ins (+100 Pts) and prompt payment confirmations (+100 Pts).</p>
+              
+              <div style="display:flex; align-items:center; gap:16px;">
+                <div style="flex:1; height:10px; background:#FFFFFF; border:1px solid var(--border); border-radius:var(--r-pill); overflow:hidden;">
+                  <div style="width:72%; height:100%; background:linear-gradient(90deg, var(--primary) 0%, var(--lavender) 100%);"></div>
+                </div>
+                <span style="font-size:13px; font-weight:700; color:var(--text);">550 pts to Level 4</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Achievements Bento Grid -->
+          <h3 style="margin-bottom:16px;">Earned Protection Badges</h3>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:18px; margin-bottom:30px;">
+            <div class="card" style="border-left:4px solid var(--primary);">
+              <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                <span style="font-size:24px;">🛡️</span>
+                <strong>Clause Guardian</strong>
+              </div>
+              <p style="font-size:13px; color:var(--text-muted);">Scanned 10+ contracts with the AI Analyzer before contract execution.</p>
+              <span class="tag purple" style="margin-top:10px;">Unlocked</span>
+            </div>
+
+            <div class="card" style="border-left:4px solid var(--success);">
+              <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                <span style="font-size:24px;">⏱️</span>
+                <strong>Halfway Checkpoint Pro</strong>
+              </div>
+              <p style="font-size:13px; color:var(--text-muted);">Completed verified 50% milestone updates on all active projects.</p>
+              <span class="tag low" style="margin-top:10px;">Unlocked (+500 Pts)</span>
+            </div>
+
+            <div class="card" style="border-left:4px solid #F59E0B;">
+              <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                <span style="font-size:24px;">💰</span>
+                <strong>Settlement Sentinel</strong>
+              </div>
+              <p style="font-size:13px; color:var(--text-muted);">100% verified payment receipts without commercial dispute.</p>
+              <span class="tag md" style="margin-top:10px;">Unlocked (+400 Pts)</span>
+            </div>
+
+            <div class="card" style="border-left:4px solid var(--lavender);">
+              <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                <span style="font-size:24px;">⚡</span>
+                <strong>Active Streak (12 Wks)</strong>
+              </div>
+              <p style="font-size:13px; color:var(--text-muted);">Consistently active and protected on ClauseLens for 12 consecutive weeks.</p>
+              <span class="tag purple" style="margin-top:10px;">Active Streak</span>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- PROPOSAL SUBMISSION MODAL -->
+  <div class="modal-overlay" id="proposal-modal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeProposalModal()">&times;</button>
+      <h3 style="margin-bottom:6px;">Submit Project Proposal</h3>
+      <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;" id="prop-job-title">Job Title</p>
+
+      <form id="prop-form" onsubmit="submitProposal(event)">
+        <input type="hidden" id="prop-job-id">
+        <div class="form-group">
+          <label>Cover Letter / Pitch</label>
+          <textarea id="prop-cover" class="form-ctrl" rows="4" required placeholder="Explain why you are the best fit for this project..."></textarea>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group">
+            <label>Proposed Price ($ USD)</label>
+            <input type="number" id="prop-price" class="form-ctrl" required min="10">
+          </div>
+          <div class="form-group">
+            <label>Estimated Delivery (Days)</label>
+            <input type="number" id="prop-days" class="form-ctrl" required min="1" value="14">
+          </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+          <button type="button" class="btn btn-line btn-sm" onclick="closeProposalModal()">Cancel</button>
+          <button type="submit" class="btn btn-green btn-sm">Submit Proposal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADD POLICY RULE MODAL -->
+  <div class="modal-overlay" id="rule-modal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeRuleModal()">&times;</button>
+      <h3 style="margin-bottom:6px;">Add Protection Policy Rule</h3>
+      <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">Define acceptable terms for contract agreement risk checks.</p>
+
+      <form id="rule-form" onsubmit="saveRule(event)">
+        <div class="form-group">
+          <label>Category</label>
+          <select id="rule-category" class="form-ctrl">
+            <option value="Payment delay">Payment Delay / Due Days</option>
+            <option value="Advance payment">Advance Payment %</option>
+            <option value="Revisions">Revision Rounds</option>
+            <option value="Bug fixing">Warranty / Bug Fixing</option>
+            <option value="IP & Source Code">IP & Source Code Ownership</option>
+            <option value="Liability">Liability Cap</option>
+            <option value="Custom">Custom Standard</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Rule Name</label>
+          <input type="text" id="rule-name" class="form-ctrl" required placeholder="e.g. Maximum payment delay window">
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div class="form-group">
+            <label>Expected Value</label>
+            <input type="text" id="rule-val" class="form-ctrl" required placeholder="e.g. 15">
+          </div>
+          <div class="form-group">
+            <label>Severity on Conflict</label>
+            <select id="rule-sev" class="form-ctrl">
+              <option value="HIGH">HIGH</option>
+              <option value="MEDIUM">MEDIUM</option>
+              <option value="LOW">LOW</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
+          <button type="button" class="btn btn-line btn-sm" onclick="closeRuleModal()">Cancel</button>
+          <button type="submit" class="btn btn-green btn-sm">Save Rule</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CUSTOM TIMELINE MODAL -->
+  <div class="modal" id="custom-timeline-modal">
+    <div class="modal-box" style="max-width:680px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <div>
+          <span class="tag purple" style="margin-bottom:4px;">Timeline Customizer</span>
+          <h3 style="margin:0;">Custom Work Timeline & Milestones</h3>
+        </div>
+        <button class="modal-close" onclick="closeCustomTimelineModal()">&times;</button>
+      </div>
+      <p style="color:var(--text-muted); font-size:13.5px; margin-bottom:18px;">
+        Adjust your project start date, target delivery deadline, and customize individual milestone dates.
+      </p>
+
+      <form id="custom-timeline-form" onsubmit="saveCustomTimeline(event)">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+          <div class="form-group">
+            <label>Project Start Date</label>
+            <input type="date" id="cust-start-date" class="form-ctrl" required>
+          </div>
+          <div class="form-group">
+            <label>Target Delivery Deadline</label>
+            <input type="date" id="cust-deadline-date" class="form-ctrl" required>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin:18px 0 10px;">
+          <strong style="font-size:14.5px;">Milestone Schedule & Due Dates</strong>
+          <button type="button" class="btn btn-line btn-sm" onclick="addCustomMilestoneRow()">+ Add Milestone</button>
+        </div>
+
+        <div id="cust-milestones-container" style="display:grid; gap:10px; max-height:280px; overflow-y:auto; padding-right:4px;">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px; border-top:1px solid var(--border); padding-top:16px;">
+          <button type="button" class="btn btn-line btn-sm" onclick="closeCustomTimelineModal()">Cancel</button>
+          <button type="submit" class="btn btn-green btn-sm" id="btn-save-cust-timeline">Save Custom Timeline</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TIMELINE EXTENSION MODAL -->
+  <div class="modal" id="extension-modal">
+    <div class="modal-box" style="max-width:500px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <div>
+          <span class="tag md" style="margin-bottom:4px;">Schedule Extension</span>
+          <h3 style="margin:0;">Request Timeline Extension</h3>
+        </div>
+        <button class="modal-close" onclick="closeExtensionModal()">&times;</button>
+      </div>
+      <p style="color:var(--text-muted); font-size:13.5px; margin-bottom:16px;">
+        Need extra time to polish deliverables or awaiting client feedback? Extend your milestone deadline smoothly.
+      </p>
+
+      <form id="extension-form" onsubmit="submitExtensionRequest(event)">
+        <input type="hidden" id="ext-task-id">
+        <div class="form-group">
+          <label>Target Task / Milestone</label>
+          <div id="ext-task-title-display" style="padding:10px 14px; background:#FAF8FF; border:1px solid var(--border); border-radius:var(--r-sm); font-weight:700; font-size:14px;">
+            Task Name
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Additional Days Requested</label>
+          <select id="ext-days-select" class="form-ctrl">
+            <option value="3">+3 Days Extension</option>
+            <option value="5" selected>+5 Days Extension</option>
+            <option value="7">+7 Days (1 Week) Extension</option>
+            <option value="14">+14 Days (2 Weeks) Extension</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Reason for Extension (Shared with Client)</label>
+          <textarea id="ext-reason" class="form-ctrl" rows="3" placeholder="e.g. Awaiting client API keys and additional asset specifications..."></textarea>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:18px;">
+          <button type="button" class="btn btn-line btn-sm" onclick="closeExtensionModal()">Cancel</button>
+          <button type="submit" class="btn btn-purple btn-sm" id="btn-submit-extension">Confirm & Notify Client</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- PHASE DELIVERABLE / COMPLETION MODAL -->
+  <div class="modal" id="phase-complete-modal">
+    <div class="modal-box" style="max-width:540px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <div>
+          <span class="tag purple" style="margin-bottom:4px;">Phase Handover & Delivery</span>
+          <h3 style="margin:0;">Complete Milestone Phase</h3>
+        </div>
+        <button class="modal-close" onclick="closeCompletePhaseModal()">&times;</button>
+      </div>
+      <p style="color:var(--text-muted); font-size:13.5px; margin-bottom:16px;">
+        Ready to deliver this phase? Confirming completion awards <strong>+150 bonus reward points</strong>, generates your milestone disbursement, and unlocks the next phase.
+      </p>
+
+      <form id="phase-complete-form" onsubmit="submitPhaseCompletion(event)">
+        <input type="hidden" id="complete-phase-task-id">
+        <div class="form-group">
+          <label>Milestone Phase</label>
+          <div id="complete-phase-title-display" style="padding:10px 14px; background:#FAF8FF; border:1px solid var(--border); border-radius:var(--r-sm); font-weight:700; font-size:14.5px; color:var(--dark);">
+            Phase Title
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Deliverables Notes or Proof Link (Optional)</label>
+          <textarea id="complete-phase-notes" class="form-ctrl" rows="3" placeholder="e.g. Completed initial architecture diagrams and deployed database schema. PR link: https://github.com/..."></textarea>
+        </div>
+
+        <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:var(--r-sm); padding:12px; margin-bottom:16px; display:flex; align-items:center; gap:10px;">
+          <div style="font-size:22px;">🎁</div>
+          <div style="font-size:13px; color:#166534;">
+            <strong>Reward Unlocked:</strong> +150 reputation points will be credited to your account upon confirmation.
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" class="btn btn-line btn-sm" onclick="closeCompletePhaseModal()">Cancel</button>
+          <button type="submit" class="btn btn-green btn-sm" id="btn-submit-phase-complete">Confirm & Mark Phase Done (+150 Pts)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FULL AGREEMENT VIEWER & OFFICIAL DIGITAL CORPORATE SEAL MODAL -->
+  <div class="modal" id="view-agreement-modal">
+    <div class="modal-box" style="max-width:820px; max-height:92vh; overflow-y:auto; padding:0; border-radius:18px; box-shadow:0 25px 70px rgba(30,27,75,0.35);">
+      
+      <!-- Contract Modal Header -->
+      <div style="background:linear-gradient(135deg, #1E1B4B 0%, #312E81 100%); color:#FFFFFF; padding:22px 28px; position:relative; border-bottom:3px solid #818CF8;">
+        <button class="modal-close" onclick="closeViewAgreementModal()" style="color:#FFFFFF; top:18px; right:18px; font-size:24px; opacity:0.85; transition:opacity 0.2s;">&times;</button>
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; padding-right:36px; flex-wrap:wrap; gap:8px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <img src="assets/img/logo-horizontal.png" alt="ClauseLens" style="height:28px; width:auto; filter:brightness(0) invert(1);">
+            <span class="portal-badge" style="background:rgba(255,255,255,0.2); color:#FFFFFF; font-weight:700;">Smart Escrow Contract</span>
+          </div>
+          <span class="tag lo" id="view-agr-status-tag" style="background:#ECFDF5; color:#059669; font-weight:700;">&check; VERIFIED CONTRACT</span>
+        </div>
+        <h2 id="view-agr-modal-title" style="margin:4px 0 6px; font-size:20px; color:#FFFFFF;">Master Agreement Title</h2>
+        <div style="font-size:13px; color:#C7D2FE; display:flex; gap:16px; flex-wrap:wrap;">
+          <span>Client: <strong id="view-agr-company" style="color:#FFFFFF;">Company Name</strong></span>
+          <span>Contractor: <strong id="view-agr-freelancer" style="color:#FFFFFF;">Freelancer Name</strong></span>
+          <span id="view-agr-date">Date: 2026-10-24</span>
+        </div>
+      </div>
+
+      <!-- Contract Key Terms Ribbon -->
+      <div style="background:#EEF2FF; border-bottom:1px solid #E0E7FF; padding:14px 28px; display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:12px;">
+        <div>
+          <span style="font-size:11px; text-transform:uppercase; color:#4F46E5; font-weight:700; display:block;">Total Consideration</span>
+          <strong id="view-agr-amount" style="font-size:17px; color:#1E1B4B;">$0.00</strong>
+          <small id="view-agr-inr" style="display:block; color:#6366F1; font-size:11.5px; font-weight:600;">(₹0 INR)</small>
+        </div>
+        <div>
+          <span style="font-size:11px; text-transform:uppercase; color:#4F46E5; font-weight:700; display:block;">Advance Escrow</span>
+          <strong id="view-agr-advance" style="font-size:16px; color:#1E1B4B;">30%</strong>
+          <small style="display:block; color:var(--text-muted); font-size:11px;">Deposited to Escrow</small>
+        </div>
+        <div>
+          <span style="font-size:11px; text-transform:uppercase; color:#4F46E5; font-weight:700; display:block;">Payment Due Days</span>
+          <strong id="view-agr-days" style="font-size:16px; color:#1E1B4B;">15 Days</strong>
+          <small style="display:block; color:var(--text-muted); font-size:11px;">Turnaround window</small>
+        </div>
+        <div>
+          <span style="font-size:11px; text-transform:uppercase; color:#4F46E5; font-weight:700; display:block;">Revisions Cap</span>
+          <strong id="view-agr-revs" style="font-size:16px; color:#1E1B4B;">3 Rounds</strong>
+          <small style="display:block; color:var(--text-muted); font-size:11px;">Included per phase</small>
+        </div>
+      </div>
+
+      <!-- Contract Body Paper -->
+      <div style="padding:28px;">
+        <div class="contract-paper">
+          <div id="view-agr-body-text" style="white-space:pre-wrap; font-size:13.5px; line-height:1.75; color:#1E293B;">
+            Loading agreement clauses...
+          </div>
+
+          <!-- OFFICIAL DUAL VERIFICATION & CORPORATE SEAL SECTION -->
+          <div class="contract-seal-container">
+            <!-- Left: Client Corporate Seal -->
+            <div class="official-corporate-seal" id="seal-company-card">
+              <div class="seal-stamp-graphic">
+                <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+              <div style="flex:1;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="font-size:11px; font-weight:800; text-transform:uppercase; color:#A16207; letter-spacing:0.5px;">Official Corporate Seal</span>
+                  <span class="tag lo" style="font-size:10px; background:#FEF08A; color:#854D0E; font-weight:800;">VERIFIED</span>
+                </div>
+                <h4 id="seal-company-name" style="margin:3px 0 2px; font-size:15px; color:#713F12; font-weight:800; text-transform:uppercase;">APEX SOLUTION</h4>
+                <div style="font-size:11px; color:#A16207; font-family:monospace;" id="seal-company-hash">SHA256:7f83b1657ff1...</div>
+                <div style="font-size:11.5px; color:#854D0E; margin-top:3px; font-weight:600;">
+                  &check; Digitally Signed & Sealed by Hiring Client
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Freelancer Digital Acceptance Card -->
+            <div class="freelancer-signature-card" id="seal-freelancer-card">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-size:11px; font-weight:800; text-transform:uppercase; color:#64748B; letter-spacing:0.5px;">Contractor Digital Signature</span>
+                  <span id="seal-fl-status-badge" class="tag md" style="font-size:10.5px; font-weight:700;">AWAITING SIGNATURE</span>
+                </div>
+                <div class="cursive-signature" id="seal-fl-signature">VISHAL R R</div>
+                <div style="font-size:11px; color:#64748B; font-family:monospace;" id="seal-fl-hash">
+                  PENDING FREELANCER DIGITAL CONSENT
+                </div>
+              </div>
+              <div id="seal-fl-confirm-text" style="font-size:11.5px; color:#64748B; margin-top:6px;">
+                Signature applies upon clicking "Accept & Sign Agreement".
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal Bottom Actions -->
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-top:20px;">
+          <div style="display:flex; gap:10px;">
+            <button type="button" class="btn btn-purple btn-sm" id="btn-modal-scan-ai" onclick="scanCurrentModalAgreementWithAi()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><path d="M11 8v6M8 11h6"/></svg>
+              Scan with AI Risk Analyzer
+            </button>
+            <button type="button" class="btn btn-line btn-sm" onclick="window.print()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Print / Save PDF
+            </button>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <button type="button" class="btn btn-line btn-sm" onclick="closeViewAgreementModal()">Close</button>
+            <button type="button" class="btn btn-green btn-sm" id="btn-modal-accept-agr" onclick="acceptCurrentModalAgreement()" style="padding:9px 20px; font-weight:700;">
+              ✍️ Accept & Sign Agreement (+200 Pts)
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- WITHDRAWAL MODAL -->
+  <div class="modal" id="withdraw-modal">
+    <div class="modal-box" style="max-width:540px; max-height:92vh; display:flex; flex-direction:column; border-radius:18px; padding:0; overflow:hidden; box-shadow:0 25px 60px rgba(30,27,75,0.35);">
+      <!-- Header -->
+      <div style="background:linear-gradient(135deg, #1E1B4B 0%, #312E81 100%); color:#FFFFFF; padding:18px 24px; position:relative; flex-shrink:0;">
+        <button class="modal-close" onclick="closeWithdrawModal()" style="color:#FFFFFF; top:16px; right:18px; font-size:24px; opacity:0.85; cursor:pointer;">&times;</button>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:2px;">
+          <span style="font-size:22px;">💸</span>
+          <h2 style="margin:0; font-size:20px; font-weight:800; color:#FFFFFF;">Withdraw Funds</h2>
+        </div>
+        <p style="margin:0; font-size:12.5px; opacity:0.85;">Transfer your earned milestone funds directly to your bank account or UPI.</p>
+      </div>
+
+      <!-- Body (Scrollable) -->
+      <div style="padding:20px 24px 24px; overflow-y:auto; flex:1; max-height:calc(92vh - 75px);">
+        <!-- Available balance display -->
+        <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:12px; padding:12px 16px; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:11.5px; color:#166534; font-weight:700; text-transform:uppercase;">Available Balance</div>
+            <div id="modal-avail-balance" style="font-size:22px; font-weight:800; color:#15803D;">$0.00</div>
+          </div>
+          <div id="modal-avail-balance-inr" style="font-size:13.5px; color:#166534; font-weight:700;">≈ ₹0.00 INR</div>
+        </div>
+
+        <form id="withdraw-form" onsubmit="submitWithdrawal(event)">
+          <!-- Amount Input with Max button -->
+          <div style="margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <label style="font-weight:700; font-size:13px; color:var(--text);">Withdrawal Amount ($ USD) *</label>
+              <button type="button" class="btn btn-line btn-sm" style="padding:2px 8px; font-size:11px;" onclick="setWithdrawMax()">Withdraw Max</button>
+            </div>
+            <div style="position:relative;">
+              <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); font-weight:700; color:var(--text-muted);">$</span>
+              <input type="number" id="wdr-amount" class="form-ctrl" step="0.01" min="1" placeholder="e.g. 250.00" style="padding-left:30px; font-size:15px; font-weight:700;" required oninput="calcInrPreview()">
+            </div>
+            <div id="wdr-inr-preview" style="font-size:12px; color:#4F46E5; margin-top:4px; font-weight:600;">Estimated Payout: ₹0.00 INR (1 USD ≈ ₹83.00)</div>
+          </div>
+
+          <!-- Payout Method selection -->
+          <div style="margin-bottom:14px;">
+            <label style="font-weight:700; font-size:13px; color:var(--text); margin-bottom:6px; display:block;">Payout Method *</label>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+              <label style="border:1.5px solid var(--border); border-radius:10px; padding:8px 6px; cursor:pointer; text-align:center; transition:all 0.15s ease;" id="label-method-upi">
+                <input type="radio" name="payoutMethod" value="UPI" checked onchange="onPayoutMethodChange()" style="margin-bottom:3px;">
+                <div style="font-weight:700; font-size:12.5px;">UPI (Instant)</div>
+                <div style="font-size:10px; color:var(--text-muted);">GPay / PhonePe</div>
+              </label>
+
+              <label style="border:1.5px solid var(--border); border-radius:10px; padding:8px 6px; cursor:pointer; text-align:center; transition:all 0.15s ease;" id="label-method-bank">
+                <input type="radio" name="payoutMethod" value="BANK_TRANSFER" onchange="onPayoutMethodChange()" style="margin-bottom:3px;">
+                <div style="font-weight:700; font-size:12.5px;">Bank Transfer</div>
+                <div style="font-size:10px; color:var(--text-muted);">NEFT / IMPS</div>
+              </label>
+
+              <label style="border:1.5px solid var(--border); border-radius:10px; padding:8px 6px; cursor:pointer; text-align:center; transition:all 0.15s ease;" id="label-method-paypal">
+                <input type="radio" name="payoutMethod" value="PAYPAL" onchange="onPayoutMethodChange()" style="margin-bottom:3px;">
+                <div style="font-weight:700; font-size:12.5px;">PayPal</div>
+                <div style="font-size:10px; color:var(--text-muted);">International</div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Dynamic Destination Fields -->
+          <!-- UPI Input -->
+          <div id="payout-field-upi" style="margin-bottom:14px;">
+            <label style="font-weight:700; font-size:13px; color:var(--text); margin-bottom:4px; display:block;">UPI Virtual Payment Address (VPA) *</label>
+            <input type="text" id="wdr-upi-id" class="form-ctrl" placeholder="e.g. yourname@okhdfcbank or 9876543210@paytm">
+            <small style="color:var(--text-muted); font-size:11px; margin-top:3px; display:block;">Supports Google Pay, PhonePe, Paytm, BHIM, and all bank UPI apps.</small>
+          </div>
+
+          <!-- Bank Transfer Inputs -->
+          <div id="payout-field-bank" style="display:none; margin-bottom:14px;">
+            <div style="margin-bottom:8px;">
+              <label style="font-weight:700; font-size:12.5px; color:var(--text); margin-bottom:3px; display:block;">Beneficiary Account Holder Name *</label>
+              <input type="text" id="wdr-bank-name" class="form-ctrl" placeholder="e.g. VISHAL R R">
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+              <div>
+                <label style="font-weight:700; font-size:12.5px; color:var(--text); margin-bottom:3px; display:block;">Account Number *</label>
+                <input type="text" id="wdr-bank-acc" class="form-ctrl" placeholder="Account Number">
+              </div>
+              <div>
+                <label style="font-weight:700; font-size:12.5px; color:var(--text); margin-bottom:3px; display:block;">IFSC Code *</label>
+                <input type="text" id="wdr-bank-ifsc" class="form-ctrl" placeholder="e.g. HDFC0001234">
+              </div>
+            </div>
+            <div>
+              <label style="font-weight:700; font-size:12.5px; color:var(--text); margin-bottom:3px; display:block;">Bank Name & Branch</label>
+              <input type="text" id="wdr-bank-branch" class="form-ctrl" placeholder="e.g. HDFC Bank, Anna Nagar">
+            </div>
+          </div>
+
+          <!-- PayPal Input -->
+          <div id="payout-field-paypal" style="display:none; margin-bottom:14px;">
+            <label style="font-weight:700; font-size:13px; color:var(--text); margin-bottom:4px; display:block;">PayPal Email Address *</label>
+            <input type="email" id="wdr-paypal-email" class="form-ctrl" placeholder="e.g. you@example.com">
+          </div>
+
+          <div style="background:#F9FAFB; border:1px solid #E5E7EB; border-radius:10px; padding:10px 12px; margin-bottom:16px; font-size:11.5px; color:var(--text-muted); display:flex; align-items:center; gap:8px;">
+            <span style="font-size:15px;">🛡️</span>
+            <span>Zero transfer fees deducted. Funds will reflect in your designated account instantly upon submission.</span>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display:flex; justify-content:flex-end; gap:10px; padding-top:12px; border-top:1px solid #E2E8F0;">
+            <button type="button" class="btn btn-line btn-sm" onclick="closeWithdrawModal()">Cancel</button>
+            <button type="submit" id="btn-submit-withdraw" class="btn btn-sm" style="background:#16A34A; color:#FFFFFF; font-weight:700; padding:10px 22px;">Confirm & Withdraw &rarr;</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/freelancer.js"></script>
+  <script src="js/contract-analyzer.js"></script>
+  <script src="js/email-center.js"></script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Operations & Legal History — ClauseLens</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" type="image/png" href="assets/img/favicon.png">
+  <link rel="apple-touch-icon" href="assets/img/favicon.png">
+</head>
+<body data-dashboard="admin" data-login="admin-login.html">
+
+  <div class="dash-shell">
+    <!-- TOP BAR -->
+    <header class="dash-topbar">
+      <div class="dash-top-left">
+        <a class="brand" href="admin-dashboard.html" style="text-decoration:none;">
+          <img src="assets/img/logo-horizontal.png" alt="ClauseLens" style="height:34px; width:auto; filter: drop-shadow(0 2px 8px rgba(104,71,232,0.2));">
+        </a>
+        <span class="portal-badge" style="background:#FEE2E2; color:#991B1B;">Super Administrator Console</span>
+      </div>
+
+      <div class="dash-user-ctrl">
+        <span style="font-weight:600; font-size:14px;" id="who">Administrator</span>
+        <button class="btn btn-line btn-sm" id="logout" type="button">Log Out</button>
+      </div>
+    </header>
+
+    <!-- MAIN BODY -->
+    <div class="dash-body">
+      <aside class="dash-nav">
+        <a href="#overview" class="active" onclick="switchAdminTab('overview')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Platform Dashboard
+        </a>
+        <a href="#users" onclick="switchAdminTab('users')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          User Management
+        </a>
+        <a href="#analyses" onclick="switchAdminTab('analyses')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><path d="M11 8v6M8 11h6"/></svg>
+          Contract Monitoring & AI
+        </a>
+        <a href="#domains" onclick="switchAdminTab('domains')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          Domain Templates
+        </a>
+        <a href="#audit" onclick="switchAdminTab('audit')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+          Audit Logs
+        </a>
+        <a href="reports.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Reports & Analytics &rarr;
+        </a>
+      </aside>
+
+      <main class="dash-content">
+
+        <!-- TAB 1: OVERVIEW METRICS -->
+        <section id="tab-overview" class="tab-pane">
+          <div class="page-title-box">
+            <div>
+              <h1>Platform Operations & Analytics</h1>
+              <p>Real-time metrics, risk distribution, registered users, and active projects.</p>
+            </div>
+            <a href="reports.html" class="btn btn-purple btn-sm">Full Analytics &rarr;</a>
+          </div>
+
+          <!-- 6 CORE ADMIN METRICS -->
+          <div class="metric-cards" style="grid-template-columns:repeat(3, 1fr); gap:18px; margin-bottom:24px;">
+            <div class="m-card">
+              <small>Total Registered Users</small>
+              <strong id="adm-total-users">0</strong>
+              <em>All-time platform accounts</em>
+            </div>
+            <div class="m-card">
+              <small>Total Companies</small>
+              <strong id="adm-companies">0</strong>
+              <em>Verified hiring organizations</em>
+            </div>
+            <div class="m-card">
+              <small>Total Freelancers</small>
+              <strong id="adm-freelancers">0</strong>
+              <em>Active contractor profiles</em>
+            </div>
+            <div class="m-card">
+              <small>Total Contracts Analyzed</small>
+              <strong id="adm-analyses">0</strong>
+              <em>AI risk scans executed</em>
+            </div>
+            <div class="m-card">
+              <small>High-Risk Contracts</small>
+              <strong id="adm-high-risks" style="color:var(--danger);">0</strong>
+              <em>Flagged for severe clauses</em>
+            </div>
+            <div class="m-card">
+              <small>Active Users (30d)</small>
+              <strong id="adm-active-users" style="color:var(--primary);">0</strong>
+              <em>Monthly active participants</em>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:24px;">
+            <h3>Administrator Compliance Notice</h3>
+            <p style="color:var(--text-muted); font-size:14px; margin-top:6px;">
+              Admin access to private user agreements and private chat conversations is restricted to safety, dispute resolution, and regulatory oversight. Every administrative query is logged in immutable platform audit logs.
+            </p>
+          </div>
+        </section>
+
+        <!-- TAB 2: USER MANAGEMENT -->
+        <section id="tab-users" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <h1>User Account Management</h1>
+              <p>Review registered companies and freelancers, inspect details, and activate or suspend accounts.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="table-responsive">
+              <table class="clean-table" id="users-table">
+                <thead>
+                  <tr>
+                    <th>User ID</th>
+                    <th>Name & Role</th>
+                    <th>Email Address</th>
+                    <th>Profile / Industry / Skills</th>
+                    <th>Account Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="users-tbody">
+                  <tr><td colspan="6">Loading users...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 3: AGREEMENT ANALYSIS ARCHIVE -->
+        <section id="tab-analyses" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <h1>Agreement Risk Analysis History</h1>
+              <p>Centralized archive of every agreement scan, severity counts, and verified quotation history.</p>
+            </div>
+            <div>
+              <input type="text" id="adm-search-input" class="form-ctrl" placeholder="Search by filename or user..." oninput="searchAnalyses()" style="width:280px;">
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="table-responsive">
+              <table class="clean-table">
+                <thead>
+                  <tr>
+                    <th>Report ID</th>
+                    <th>Document Filename</th>
+                    <th>Freelancer</th>
+                    <th>Company</th>
+                    <th>Risk Counts</th>
+                    <th>Policy Ver</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="analyses-tbody">
+                  <tr><td colspan="8">Loading analysis history...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: DOMAIN TEMPLATES -->
+        <section id="tab-domains" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <h1>Domain Templates Management</h1>
+              <p>Manage supported freelance domains and rule category templates.</p>
+            </div>
+          </div>
+
+          <div class="card" style="max-width:600px;">
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+              <input type="text" id="new-domain-input" class="form-ctrl" placeholder="Enter new domain category...">
+              <button class="btn btn-green btn-sm" onclick="addDomain()">+ Add Domain</button>
+            </div>
+            <ul id="domain-list" style="list-style:none; padding:0; margin:0; display:grid; gap:8px;"></ul>
+          </div>
+        </section>
+
+        <!-- TAB 5: AUDIT LOGS -->
+        <section id="tab-audit" class="tab-pane" style="display:none;">
+          <div class="page-title-box">
+            <div>
+              <h1>Platform Audit Logs</h1>
+              <p>Cryptographically traceable log of account changes, agreement uploads, analysis runs, and administrative actions.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="table-responsive">
+              <table class="clean-table">
+                <thead>
+                  <tr>
+                    <th>Log ID</th>
+                    <th>Timestamp</th>
+                    <th>Action</th>
+                    <th>Details</th>
+                    <th>Actor</th>
+                    <th>IP Address</th>
+                  </tr>
+                </thead>
+                <tbody id="audit-tbody">
+                  <tr><td colspan="6">Loading audit trail...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ANALYSIS DETAIL MODAL -->
+  <div class="modal-overlay" id="adm-modal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeAdminModal()">&times;</button>
+      <h3 id="adm-modal-title" style="margin-bottom:6px;">Analysis Report Detail</h3>
+      <p style="color:var(--text-muted); font-size:13.5px; margin-bottom:20px;" id="adm-modal-sub"></p>
+      <div id="adm-modal-findings" style="display:grid; gap:14px;"></div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="js/auth.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
