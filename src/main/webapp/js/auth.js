@@ -113,6 +113,7 @@
         if (!body.country) body.country = 'United States';
       }
       var url = kind === 'login' ? 'api/login/' + form.dataset.role : 'api/register/' + kind;
+      var isGitHubPages = window.location.hostname.includes('github.io');
       api(url, { method: 'POST', body: JSON.stringify(body) }).then(function (data) {
         if (kind === 'login') { location.href = data.redirect; return; }
         show(box, 'ok', 'Account created. Taking you to sign in...');
@@ -126,6 +127,14 @@
           }, 1200);
         }
       }).catch(function (err) {
+        if (isGitHubPages) {
+          show(box, 'ok', 'GitHub Pages Demo Mode: Opening dashboard...');
+          setTimeout(function () {
+            var role = form.dataset.role || kind;
+            location.href = (role === 'company') ? 'company-dashboard.html' : 'freelancer-dashboard.html';
+          }, 600);
+          return;
+        }
         show(box, 'err', err.message); btn.disabled = false; btn.textContent = label;
       });
     });
@@ -134,8 +143,15 @@
   // Dashboards: load the signed-in user, handle logout
   if (document.body.dataset.dashboard) {
     var who = document.getElementById('who');
+    var isGitHubPages = window.location.hostname.includes('github.io');
     api('api/me').then(function (u) { if (who) who.textContent = u.name || 'Welcome'; })
-      .catch(function () { location.href = document.body.dataset.login; });
+      .catch(function () {
+        if (isGitHubPages) {
+          if (who) who.textContent = (document.body.dataset.dashboard === 'company') ? 'Acme Corp (Demo)' : 'Alex Vance (Demo)';
+          return;
+        }
+        location.href = document.body.dataset.login;
+      });
     var out = document.getElementById('logout');
     if (out) out.addEventListener('click', function () {
       api('api/logout', { method: 'POST' }).finally(function () { location.href = document.body.dataset.login; });
