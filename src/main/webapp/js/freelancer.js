@@ -6,7 +6,8 @@ let lastAnalysisResult = null;
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     const me = await API.get('api/me');
-    if (me.role !== 'FREELANCER') {
+    const isStatic = window.location.hostname.includes('github.io') || window.location.protocol === 'file:';
+    if (!isStatic && me.role !== 'FREELANCER') {
       window.location.href = 'freelancer-login.html';
       return;
     }

@@ -5,7 +5,8 @@ let activeCompanyConvId = null;
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     const me = await API.get('api/me');
-    if (me.role !== 'COMPANY') {
+    const isStatic = window.location.hostname.includes('github.io') || window.location.protocol === 'file:';
+    if (!isStatic && me.role !== 'COMPANY') {
       window.location.href = 'company-login.html';
       return;
     }

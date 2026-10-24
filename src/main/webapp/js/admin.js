@@ -4,7 +4,8 @@ let currentAdminId = null;
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     const me = await API.get('api/me');
-    if (me.role !== 'ADMIN') {
+    const isStatic = window.location.hostname.includes('github.io') || window.location.protocol === 'file:';
+    if (!isStatic && me.role !== 'ADMIN') {
       window.location.href = 'admin-login.html';
       return;
     }

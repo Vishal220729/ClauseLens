@@ -1,25 +1,47 @@
-// ClauseLens unified API client
+// ClauseLens unified API client with seamless Mock & Static Cloud Fallback
 const API = {
   async get(url) {
-    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ error: 'Request failed' }));
-      throw new Error(err.error || `HTTP ${res.status}`);
+    const isStatic = window.location.hostname.includes('github.io') || window.location.protocol === 'file:';
+    if (isStatic && window.CL_MOCK_DISPATCH) {
+      return window.CL_MOCK_DISPATCH(url, { method: 'GET' });
     }
-    return res.json();
+
+    try {
+      const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+      if (!res.ok) {
+        if (window.CL_MOCK_DISPATCH) return window.CL_MOCK_DISPATCH(url, { method: 'GET' });
+        const err = await res.json().catch(() => ({ error: 'Request failed' }));
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
+      return res.json();
+    } catch (err) {
+      if (window.CL_MOCK_DISPATCH) return window.CL_MOCK_DISPATCH(url, { method: 'GET' });
+      throw err;
+    }
   },
 
   async post(url, data = {}) {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({ error: 'Request failed' }));
-      throw new Error(err.error || `HTTP ${res.status}`);
+    const isStatic = window.location.hostname.includes('github.io') || window.location.protocol === 'file:';
+    if (isStatic && window.CL_MOCK_DISPATCH) {
+      return window.CL_MOCK_DISPATCH(url, { method: 'POST', body: JSON.stringify(data) });
     }
-    return res.json();
+
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) {
+        if (window.CL_MOCK_DISPATCH) return window.CL_MOCK_DISPATCH(url, { method: 'POST', body: JSON.stringify(data) });
+        const err = await res.json().catch(() => ({ error: 'Request failed' }));
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
+      return res.json();
+    } catch (err) {
+      if (window.CL_MOCK_DISPATCH) return window.CL_MOCK_DISPATCH(url, { method: 'POST', body: JSON.stringify(data) });
+      throw err;
+    }
   }
 };
 
