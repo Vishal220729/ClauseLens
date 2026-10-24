@@ -16,7 +16,6 @@
 
 | Portal | Live Link / Host URL | Description |
 | :--- | :--- | :--- |
-| **GitHub Pages (Global Demo)** | [https://vishal220729.github.io/ClauseLens/](https://vishal220729.github.io/ClauseLens/) | Static Cloud Preview with interactive demo dashboards |
 | **Main Landing & Auth** | `http://localhost:8080/clauselens/index.html` | High-converting landing page, brand animations, unified auth |
 | **Freelancer Workspace** | `http://localhost:8080/clauselens/freelancer-dashboard.html` | Contract analyzer, project milestones, reward points, wallet |
 | **Company Management Portal** | `http://localhost:8080/clauselens/company-dashboard.html` | Job posting, proposal review, agreement drafting, payment releases |
